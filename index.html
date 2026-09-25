@@ -668,6 +668,38 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .settings-section h4{margin:0 0 6px;font-size:13px;color:var(--text);}
 .settings-section.danger-zone .note{color:var(--red);}
 .settings-section.danger-zone h4{color:var(--red);}
+.settings-checkbox-row{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:13px;color:var(--text-dim);line-height:1.5;}
+.settings-checkbox-row input{margin-top:3px;flex:0 0 auto;}
+.settings-checkbox-row b{color:var(--text);}
+
+/* ---------- Compact Mode (phones) ---------- */
+.compact-mode-banner{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 16px;margin:14px 0 0;border-radius:var(--radius-md);
+  background:var(--accent-soft);border:1px solid var(--accent);font-size:13px;
+}
+.compact-aside-toggle{display:none;}
+body.compact-mode .compact-aside-toggle{
+  display:flex;align-items:center;justify-content:space-between;width:100%;
+  margin-top:20px;padding:12px 16px;font-family:var(--font-body);font-weight:600;font-size:13.5px;
+  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
+  color:var(--text);cursor:pointer;box-shadow:var(--shadow-card);
+}
+body.compact-mode .compact-aside-toggle .chev{transition:transform .15s ease;}
+body.compact-mode .compact-aside-toggle.expanded .chev{transform:rotate(180deg);}
+body.compact-mode aside.sidebar-right{display:none;}
+body.compact-mode aside.sidebar-right.expanded{display:block;margin-top:10px;}
+body.compact-mode .print-export-section{display:none;}
+body.compact-mode .print-export-section.expanded{display:block;}
+body.compact-mode .print-export-toggle{
+  display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:11px 16px;font-family:var(--font-body);font-weight:600;font-size:13px;
+  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
+  color:var(--text);cursor:pointer;margin-top:14px;
+}
+.print-export-toggle{display:none;}
+body.compact-mode .print-export-toggle .chev{transition:transform .15s ease;}
+body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 .input-flash-invalid{
   animation:inputFlashInvalid .9s ease;
 }
@@ -844,6 +876,14 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 
   <div id="contextHint" class="context-hint" style="display:none;"></div>
 
+  <div id="compactModeBanner" class="compact-mode-banner" style="display:none;">
+    <span>📱 Looks like you're on a small screen — <b>Compact Mode</b> trims the layout down (hides the reference sidebar and print controls behind a tap) so there's less scrolling.</span>
+    <div class="footer-actions" style="margin-left:auto;">
+      <button class="btn small primary" id="btnEnableCompactMode" type="button">Turn on</button>
+      <button class="btn small" id="btnDismissCompactBanner" type="button">Not now</button>
+    </div>
+  </div>
+
   <div class="tab-bar" role="tablist">
     <button class="tab-btn" data-tab="gradesheet" role="tab" type="button" id="tab-gradesheet" aria-controls="panel-gradesheet" aria-selected="false">Gradesheet Analyzer</button>
     <button class="tab-btn" data-tab="calc" role="tab" type="button" id="tab-calc" aria-controls="panel-calc" aria-selected="false">Calculate Raw CGPA</button>
@@ -984,19 +1024,25 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 
       <div id="semesterViewBody"></div>
 
-      <div class="student-info-row">
-        <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
-        <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
-        <span class="repeat-meta">Used only on the printed/exported plan below — never sent anywhere.</span>
-      </div>
+      <button class="print-export-toggle" id="btnTogglePrintExport" type="button">
+        <span>&#128424; Name / Student ID, print &amp; export</span><span class="chev">&#9660;</span>
+      </button>
 
-      <div class="print-toolbar">
-        <span>Planned your whole journey? Print or save it:</span>
-        <select id="printLayoutSelect">
-          <option value="compact">Layout: Compact table</option>
-          <option value="cards">Layout: Per-semester cards</option>
-        </select>
-        <button class="btn small" id="btnPrintPlan" type="button">🖨 Print / Save PDF</button>
+      <div class="print-export-section" id="printExportSection">
+        <div class="student-info-row">
+          <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
+          <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
+          <span class="repeat-meta">Used only on the printed/exported plan below — never sent anywhere.</span>
+        </div>
+
+        <div class="print-toolbar">
+          <span>Planned your whole journey? Print or save it:</span>
+          <select id="printLayoutSelect">
+            <option value="compact">Layout: Compact table</option>
+            <option value="cards">Layout: Per-semester cards</option>
+          </select>
+          <button class="btn small" id="btnPrintPlan" type="button">🖨 Print / Save PDF</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1064,6 +1110,10 @@ tr.row-flash{animation:rowflash 1.6s ease;}
       Need to back up, restore, or wipe your data? Use <button type="button" class="link-btn" id="btnFooterOpenSettings">Settings (&#9881;)</button> in the header.
     </div>
   </div>
+
+  <button class="compact-aside-toggle" id="btnToggleAside" type="button">
+    <span>&#128218; Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
+  </button>
 
   </main>
 
@@ -1142,6 +1192,13 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 <div class="confirm-modal-overlay" id="settingsModalOverlay">
   <div class="confirm-modal settings-modal">
     <h3>&#9881; Settings</h3>
+    <div class="settings-section">
+      <h4>Display</h4>
+      <label class="settings-checkbox-row">
+        <input type="checkbox" id="chkCompactMode">
+        <span><b>Compact Mode</b> — a shorter, simplified layout for phones: hides the reference sidebar and print/export controls behind a tap, so entering grades takes less scrolling.</span>
+      </label>
+    </div>
     <div class="settings-section">
       <h4>Your data</h4>
       <div class="note">Everything lives only in this browser's local storage. Back it up to a file, or move it to another device/browser.</div>
@@ -1549,7 +1606,9 @@ function saveState(){
         targetCgpa: g("targetCgpaInput"),
         mixTierState: (typeof mixTierState!=="undefined") ? mixTierState : undefined,
         darkMode: (typeof darkMode!=="undefined") ? darkMode : false,
-        howtoDismissed: (typeof howtoDismissed!=="undefined") ? howtoDismissed : false
+        howtoDismissed: (typeof howtoDismissed!=="undefined") ? howtoDismissed : false,
+        compactMode: (typeof compactMode!=="undefined") ? compactMode : false,
+        compactModePrompted: (typeof compactModePrompted!=="undefined") ? compactModePrompted : false
       }
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -1602,6 +1661,9 @@ function hydrateExtras(){
   if(ex.targetCgpa) document.getElementById("targetCgpaInput").value = ex.targetCgpa;
   if(Array.isArray(ex.mixTierState) && ex.mixTierState.length) mixTierState = ex.mixTierState;
   if(ex.howtoDismissed){ howtoDismissed = true; }
+  if(typeof ex.compactMode === "boolean"){ compactMode = ex.compactMode; applyCompactMode(); }
+  if(typeof ex.compactModePrompted === "boolean"){ compactModePrompted = ex.compactModePrompted; }
+  maybeSuggestCompactMode();
   render();
 }
 
@@ -3924,6 +3986,57 @@ document.getElementById("btnThemeToggle").addEventListener("click", ()=>{
 document.getElementById("btnUndo").addEventListener("click", undoLastChange);
 applyTheme();
 
+/* ============================= COMPACT MODE (phones) ============================= */
+// A same-site, same-file mode — never a separate build — that hides the two
+// least phone-friendly sections (the reference sidebar and print/export)
+// behind a one-tap disclosure, and tightens spacing generally. Persisted
+// like darkMode; also auto-suggested once via a dismissible banner for
+// anyone landing here on a narrow screen for the first time.
+let compactMode = false;
+let compactModePrompted = false;
+
+function applyCompactMode(){
+  document.body.classList.toggle("compact-mode", compactMode);
+  const chk = document.getElementById("chkCompactMode");
+  if(chk) chk.checked = compactMode;
+}
+function maybeSuggestCompactMode(){
+  const banner = document.getElementById("compactModeBanner");
+  if(!banner) return;
+  if(compactMode || compactModePrompted || window.innerWidth > 640){ banner.style.display = "none"; return; }
+  banner.style.display = "flex";
+}
+document.getElementById("chkCompactMode").addEventListener("change", (e)=>{
+  compactMode = e.target.checked;
+  applyCompactMode();
+  saveState();
+});
+document.getElementById("btnEnableCompactMode").addEventListener("click", ()=>{
+  compactMode = true;
+  compactModePrompted = true;
+  applyCompactMode();
+  document.getElementById("compactModeBanner").style.display = "none";
+  saveState();
+});
+document.getElementById("btnDismissCompactBanner").addEventListener("click", ()=>{
+  compactModePrompted = true;
+  document.getElementById("compactModeBanner").style.display = "none";
+  saveState();
+});
+document.getElementById("btnToggleAside").addEventListener("click", (e)=>{
+  const btn = e.currentTarget;
+  const aside = document.querySelector("aside.sidebar-right");
+  btn.classList.toggle("expanded");
+  if(aside) aside.classList.toggle("expanded");
+});
+document.getElementById("btnTogglePrintExport").addEventListener("click", (e)=>{
+  const btn = e.currentTarget;
+  const section = document.getElementById("printExportSection");
+  btn.classList.toggle("expanded");
+  if(section) section.classList.toggle("expanded");
+});
+window.addEventListener("resize", maybeSuggestCompactMode);
+
 /* ============================= FOOTER ============================= */
 
 // Every collapsible sidebar card toggles the same way: the header button
@@ -3944,6 +4057,10 @@ function hardResetEverything(){
   calcTouched = false;
   mixTierState = [{grade:"A"}];
   howtoDismissed = false;
+  compactMode = false;
+  compactModePrompted = false;
+  applyCompactMode();
+  maybeSuggestCompactMode();
   document.getElementById("calcCurrentCgpa").value = "";
   document.getElementById("calcCompletedCredits").value = "";
   document.getElementById("calcNumCourses").value = "";
@@ -3954,6 +4071,7 @@ function hardResetEverything(){
   const gsStatus = document.getElementById("gradesheetStatus");
   if(gsResult) gsResult.innerHTML = "";
   if(gsStatus) gsStatus.textContent = "";
+  document.querySelectorAll(".compact-aside-toggle, .print-export-toggle, aside.sidebar-right, .print-export-section").forEach(el=>el.classList.remove("expanded"));
   render();
   flashInfoToast("Everything's been reset.");
 }
@@ -4046,6 +4164,7 @@ document.getElementById("importDataFile").addEventListener("change", async (e)=>
 state = loadState();
 render();
 hydrateExtras();
+maybeSuggestCompactMode(); // hydrateExtras() skips this on a brand-new visit (no saved extras yet)
 </script>
 </body>
 </html>
