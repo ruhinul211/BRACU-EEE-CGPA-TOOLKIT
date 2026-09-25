@@ -40,6 +40,8 @@
 
   --teal:#07754d;
   --red:#c92a42;
+  --amber:#a3620a;
+  --violet:#6633cc;
 
   --font-body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --font-head:var(--font-body);
@@ -69,6 +71,8 @@
 
   --teal:#35d296;
   --red:#ff6b81;
+  --amber:#e6a740;
+  --violet:#b399ff;
 
   --shadow-card:0 1px 2px rgba(0,0,0,0.30), 0 10px 28px -18px rgba(0,0,0,0.65);
 }
@@ -605,35 +609,36 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .sem-walkthrough ol{margin:6px 0 0;padding-left:20px;}
 .sem-walkthrough li{margin-bottom:4px;}
 .sem-walkthrough-close{position:absolute;top:8px;right:8px;font-size:13px;}
-.print-toolbar{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:11px 16px;margin:0 0 14px;
-  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
-  font-size:12.5px;color:var(--text-dim);box-shadow:var(--shadow-card);
+/* ---------- Utility cards ----------
+   Every "extra" control in Semester Wise CGPA (elective focus, bulk-fill,
+   name/ID, print) used to share the exact same plain gray box — same
+   background, same border, same muted text — so they read as one
+   indistinguishable wall of near-identical fields. Each now gets its own
+   colored left stripe + an all-caps icon+title line, so a glance at the
+   left edge alone tells them apart, instead of a user having to read every
+   box's text to find the one they want. */
+.util-card{
+  padding:12px 16px;margin:0 0 12px;
+  background:var(--surface);border:1px solid var(--card-border);
+  border-left:4px solid var(--util-accent, var(--accent));
+  border-radius:var(--radius-md);box-shadow:var(--shadow-card);
 }
-.print-toolbar select{width:auto;min-width:170px;padding:6px 9px;font-size:12.5px;}
-.student-info-row{
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:11px 16px;margin:0 0 10px;
-  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
-  font-size:12.5px;color:var(--text-dim);
+.util-card-title{
+  display:flex;align-items:center;gap:7px;margin-bottom:8px;
+  font-family:var(--font-body);font-weight:700;font-size:11.5px;
+  color:var(--util-accent, var(--accent));text-transform:uppercase;letter-spacing:0.04em;
 }
-.student-info-row label{display:flex;align-items:center;gap:6px;font-weight:600;}
-.student-info-row input{width:auto;min-width:190px;padding:6px 9px;font-size:12.5px;font-weight:400;}
-.fill-rest-row{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:11px 16px;margin:0 0 10px;
-  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
-  font-size:12.5px;color:var(--text-dim);
-}
-.fill-rest-row select{width:auto;min-width:150px;padding:6px 9px;font-size:12.5px;}
-.elective-focus-row{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:11px 16px;margin:10px 0 0;
-  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
-  font-size:12.5px;color:var(--text-dim);
-}
-.elective-focus-row select{width:auto;min-width:230px;padding:6px 9px;font-size:12.5px;}
+.util-card-icon{font-size:14px;}
+.util-card-body{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--text-dim);}
+.util-card-body label{display:flex;align-items:center;gap:6px;font-weight:600;}
+.util-card-body input{width:auto;min-width:190px;padding:6px 9px;font-size:12.5px;font-weight:400;}
+.util-card-body select{width:auto;min-width:150px;padding:6px 9px;font-size:12.5px;}
+.util-card-note{font-size:12px;color:var(--text-dim);}
+.util-card-body .util-card-note{flex-basis:100%;}
+.util-card--elective{--util-accent:var(--violet);}
+.util-card--fill{--util-accent:var(--amber);}
+.util-card--student{--util-accent:var(--accent);}
+.util-card--print{--util-accent:var(--teal);}
 
 .validation-toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
@@ -673,11 +678,11 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .confirm-modal h3{margin:0 0 10px;font-size:16px;color:var(--text);}
 .confirm-modal #confirmModalBody{font-size:13.5px;color:var(--text-dim);line-height:1.65;}
 .settings-modal{max-width:480px;}
-.settings-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--hairline);}
-.settings-section:first-of-type{margin-top:4px;padding-top:0;border-top:none;}
-.settings-section h4{margin:0 0 6px;font-size:13px;color:var(--text);}
+.settings-section{margin-top:14px;padding:10px 0 10px 12px;border-top:1px solid var(--hairline);border-left:3px solid var(--settings-accent, var(--accent));}
+.settings-section:first-of-type{margin-top:4px;border-top:none;}
+.settings-section h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:0.03em;color:var(--settings-accent, var(--accent));display:flex;align-items:center;gap:6px;}
+.settings-section.danger-zone{--settings-accent:var(--red);}
 .settings-section.danger-zone .note{color:var(--red);}
-.settings-section.danger-zone h4{color:var(--red);}
 .settings-checkbox-row{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:13px;color:var(--text-dim);line-height:1.5;}
 .settings-checkbox-row input{margin-top:3px;flex:0 0 auto;}
 .settings-checkbox-row b{color:var(--text);}
@@ -1063,12 +1068,14 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <button class="btn small" id="btnNextSem" type="button">Next →</button>
         <button class="btn small" id="btnAddSemester" type="button" title="Not everyone finishes in 12 semesters — add another if you need it">+ Add another semester</button>
       </div>
-      <div class="elective-focus-row">
-        <span>Program Elective focus:</span>
-        <select id="preferredElectiveAreaSelect">
-          <option value="">Not decided yet — show all areas as usual</option>
-        </select>
-        <span class="repeat-meta">Reorders the course picker for Program Elective slots to show your area first. Doesn't restrict what you can pick, or affect your CGPA.</span>
+      <div class="util-card util-card--elective">
+        <div class="util-card-title"><span class="util-card-icon">&#127919;</span> Program Elective Focus</div>
+        <div class="util-card-body">
+          <select id="preferredElectiveAreaSelect">
+            <option value="">Not decided yet — show all areas as usual</option>
+          </select>
+          <span class="util-card-note">Reorders the course picker for Program Elective slots to show your area first. Doesn't restrict what you can pick, or affect your CGPA.</span>
+        </div>
       </div>
       <div class="note" style="margin-top:10px;">
         This tab defaults to the official Version 3 recommended sequence and its 12 semesters, but nothing here is locked: add, remove, or swap any course in any semester, and add semesters beyond 12 if your own journey runs longer. What matters for graduation is reaching <b>136 total credits</b>, not matching this layout exactly.
@@ -1093,28 +1100,37 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       </button>
 
       <div class="print-export-section" id="printExportSection">
-        <div class="student-info-row">
-          <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
-          <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
-          <span class="repeat-meta">Used only on the printed/exported plan below — never sent anywhere.</span>
+        <div class="util-card util-card--student">
+          <div class="util-card-title"><span class="util-card-icon">&#128100;</span> Name &amp; Student ID</div>
+          <div class="util-card-body">
+            <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
+            <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
+            <span class="util-card-note">Used only on the printed/exported plan below — never sent anywhere.</span>
+          </div>
         </div>
 
-        <div class="fill-rest-row">
-          <span>Fill remaining (ungraded) courses with:</span>
-          <select id="fillRestGradeSelect">
-            <option value="">Choose a grade…</option>
-          </select>
-          <button class="btn small" id="btnFillRestGrades" type="button">Apply</button>
+        <div class="util-card util-card--fill">
+          <div class="util-card-title"><span class="util-card-icon">&#9889;</span> Bulk-Fill Remaining Courses</div>
+          <div class="util-card-body">
+            <span>Set every still-ungraded course to:</span>
+            <select id="fillRestGradeSelect">
+              <option value="">Choose a grade…</option>
+            </select>
+            <button class="btn small" id="btnFillRestGrades" type="button">Apply</button>
+          </div>
+          <div class="util-card-note">Useful for previewing a full printout — courses you've already graded are left exactly as they are; only empty ones get set. Undo (bottom-left) reverses it, or clear a course's grade again by hand.</div>
         </div>
-        <div class="note" style="margin-top:6px;">Useful for previewing a full printout — courses you've already graded are left exactly as they are; only empty ones get set. Undo (bottom-left) reverses it, or clear a course's grade again by hand.</div>
 
-        <div class="print-toolbar">
+        <div class="util-card util-card--print">
+          <div class="util-card-title"><span class="util-card-icon">&#128424;</span> Print / Export</div>
+          <div class="util-card-body">
           <span>Planned your whole journey? Print or save it:</span>
           <select id="printLayoutSelect">
             <option value="compact">Layout: Compact table</option>
             <option value="cards">Layout: Per-semester cards</option>
           </select>
           <button class="btn small" id="btnPrintPlan" type="button">🖨 Print / Save PDF</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1283,14 +1299,14 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   <div class="confirm-modal settings-modal">
     <h3>&#9881; Settings</h3>
     <div class="settings-section">
-      <h4>Display</h4>
+      <h4>&#127912; Display</h4>
       <label class="settings-checkbox-row">
         <input type="checkbox" id="chkCompactMode">
         <span><b>Compact Mode</b> — a shorter, simplified layout for phones: hides the reference sidebar and print/export controls behind a tap, so entering grades takes less scrolling.</span>
       </label>
     </div>
-    <div class="settings-section">
-      <h4>Your data</h4>
+    <div class="settings-section" style="--settings-accent:var(--teal);">
+      <h4>&#128190; Your data</h4>
       <div class="note">Everything lives only in this browser's local storage. Back it up to a file, or move it to another device/browser.</div>
       <div class="footer-actions" style="margin-top:8px;">
         <button class="btn small" id="btnExportData" type="button">&#11015; Download my plan (.json)</button>
@@ -1300,7 +1316,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div id="settingsDataNote" class="repeat-meta" style="margin-top:6px;"></div>
     </div>
     <div class="settings-section danger-zone">
-      <h4>Danger zone</h4>
+      <h4>&#9888; Danger zone</h4>
       <div class="note">Wipes every grade, plan and preference from this browser. Can't be undone — export first if unsure.</div>
       <div class="footer-actions" style="margin-top:8px;">
         <button class="btn small footer-danger" id="btnReset" type="button">&#128465; Hard Reset (clear everything)</button>
