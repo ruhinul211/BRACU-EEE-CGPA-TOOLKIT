@@ -21,3 +21,7 @@ This is an unofficial, student-built tool — not affiliated with, produced by, 
 ## Built by
 
 [Ruhinul Haque Bhuiyan](https://www.linkedin.com/in/ruhinul-haque-bhuiyan/)
+
+## Bugs / suggestions
+
+Found a bug, or have an idea to improve it? Email **ruhinul0025@gmail.com**.
