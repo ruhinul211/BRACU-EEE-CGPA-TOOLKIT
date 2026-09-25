@@ -42,6 +42,10 @@
   --red:#c92a42;
   --amber:#a3620a;
   --violet:#6633cc;
+  --teal-soft:rgba(7,117,77,0.09);
+  --red-soft:rgba(201,42,66,0.08);
+  --amber-soft:rgba(163,98,10,0.10);
+  --violet-soft:rgba(102,51,204,0.09);
 
   --font-body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --font-head:var(--font-body);
@@ -73,6 +77,10 @@
   --red:#ff6b81;
   --amber:#e6a740;
   --violet:#b399ff;
+  --teal-soft:rgba(53,210,150,0.14);
+  --red-soft:rgba(255,107,129,0.13);
+  --amber-soft:rgba(230,167,64,0.15);
+  --violet-soft:rgba(179,153,255,0.15);
 
   --shadow-card:0 1px 2px rgba(0,0,0,0.30), 0 10px 28px -18px rgba(0,0,0,0.65);
 }
@@ -618,27 +626,39 @@ tr.row-flash{animation:rowflash 1.6s ease;}
    left edge alone tells them apart, instead of a user having to read every
    box's text to find the one they want. */
 .util-card{
-  padding:12px 16px;margin:0 0 12px;
-  background:var(--surface);border:1px solid var(--card-border);
-  border-left:4px solid var(--util-accent, var(--accent));
+  padding:13px 16px;margin:0 0 12px;
+  background:var(--util-accent-soft, var(--surface));
+  border:1.5px solid var(--util-accent, var(--card-border));
+  border-left:6px solid var(--util-accent, var(--accent));
   border-radius:var(--radius-md);box-shadow:var(--shadow-card);
 }
 .util-card-title{
-  display:flex;align-items:center;gap:7px;margin-bottom:8px;
-  font-family:var(--font-body);font-weight:700;font-size:11.5px;
+  display:flex;align-items:center;gap:8px;margin-bottom:9px;
+  font-family:var(--font-body);font-weight:800;font-size:13px;
   color:var(--util-accent, var(--accent));text-transform:uppercase;letter-spacing:0.04em;
 }
-.util-card-icon{font-size:14px;}
-.util-card-body{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--text-dim);}
+.util-card-body{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--text);}
 .util-card-body label{display:flex;align-items:center;gap:6px;font-weight:600;}
-.util-card-body input{width:auto;min-width:190px;padding:6px 9px;font-size:12.5px;font-weight:400;}
-.util-card-body select{width:auto;min-width:150px;padding:6px 9px;font-size:12.5px;}
+.util-card-body input{width:auto;min-width:190px;padding:7px 10px;font-size:13px;font-weight:400;border-color:var(--util-accent);}
+.util-card-body select{width:auto;min-width:150px;padding:7px 10px;font-size:13px;font-weight:600;border-color:var(--util-accent);}
 .util-card-note{font-size:12px;color:var(--text-dim);}
 .util-card-body .util-card-note{flex-basis:100%;}
-.util-card--elective{--util-accent:var(--violet);}
-.util-card--fill{--util-accent:var(--amber);}
-.util-card--student{--util-accent:var(--accent);}
-.util-card--print{--util-accent:var(--teal);}
+.util-card--elective{--util-accent:var(--violet);--util-accent-soft:var(--violet-soft);}
+.util-card--fill{--util-accent:var(--amber);--util-accent-soft:var(--amber-soft);}
+.util-card--student{--util-accent:var(--accent);--util-accent-soft:var(--accent-soft);}
+.util-card--print{--util-accent:var(--teal);--util-accent-soft:var(--teal-soft);}
+
+/* ---------- 3D icons ----------
+   Flat unicode emoji render as tiny, low-contrast glyphs on most platforms
+   (especially Windows) — easy to miss entirely next to bold text. These are
+   Microsoft's own open-source "Fluent 3D" emoji (glossy, rendered look),
+   loaded as small inline images so every option carries the same
+   unmistakable icon regardless of the visitor's OS/browser font. Each
+   silently disappears if it ever fails to load, rather than showing a
+   broken-image glyph. */
+.icon-3d{width:19px;height:19px;vertical-align:-5px;object-fit:contain;display:inline-block;}
+.icon-3d-sm{width:15px;height:15px;vertical-align:-3px;}
+.icon-3d-lg{width:34px;height:34px;vertical-align:-10px;}
 
 .validation-toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
@@ -678,10 +698,14 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .confirm-modal h3{margin:0 0 10px;font-size:16px;color:var(--text);}
 .confirm-modal #confirmModalBody{font-size:13.5px;color:var(--text-dim);line-height:1.65;}
 .settings-modal{max-width:480px;}
-.settings-section{margin-top:14px;padding:10px 0 10px 12px;border-top:1px solid var(--hairline);border-left:3px solid var(--settings-accent, var(--accent));}
-.settings-section:first-of-type{margin-top:4px;border-top:none;}
-.settings-section h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:0.03em;color:var(--settings-accent, var(--accent));display:flex;align-items:center;gap:6px;}
-.settings-section.danger-zone{--settings-accent:var(--red);}
+.settings-section{
+  margin-top:12px;padding:12px 14px;border-radius:var(--radius-sm);
+  background:var(--settings-accent-soft, var(--accent-soft));
+  border:1.5px solid var(--settings-accent, var(--accent));border-left:6px solid var(--settings-accent, var(--accent));
+}
+.settings-section:first-of-type{margin-top:4px;}
+.settings-section h4{margin:0 0 7px;font-size:12.5px;text-transform:uppercase;letter-spacing:0.03em;font-weight:800;color:var(--settings-accent, var(--accent));display:flex;align-items:center;gap:7px;}
+.settings-section.danger-zone{--settings-accent:var(--red);--settings-accent-soft:var(--red-soft);}
 .settings-section.danger-zone .note{color:var(--red);}
 .settings-checkbox-row{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:13px;color:var(--text-dim);line-height:1.5;}
 .settings-checkbox-row input{margin-top:3px;flex:0 0 auto;}
@@ -867,10 +891,10 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <span>EEE, Version 3</span>
       <div class="hero-eyebrow-actions">
         <button class="theme-toggle" id="btnThemeToggle" type="button" title="Switch between light and dark">
-          <span id="themeToggleIcon">&#9789;</span> <span id="themeToggleLabel">Dark</span>
+          <img class="icon-3d-sm" id="themeToggleIcon" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Crescent%20moon/3D/crescent_moon_3d.png" alt="" onerror="this.remove()"> <span id="themeToggleLabel">Dark</span>
         </button>
         <button class="theme-toggle" id="btnOpenSettings" type="button" title="Settings — data export/import, reset">
-          &#9881; Settings
+          <img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" alt="" onerror="this.remove()"> Settings
         </button>
       </div>
     </div>
@@ -895,7 +919,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
   <div class="howto-bar side-card howto-card collapsed" id="howToCard">
     <button class="side-head howto-head" id="btnToggleInstructions" type="button">
-      <span>👋 New here? Start with this — how the toolkit works</span><span class="chev">&#9660;</span>
+      <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Waving%20hand/Default/3D/waving_hand_3d_default.png" alt="" onerror="this.remove()"> New here? Start with this — how the toolkit works</span><span class="chev">&#9660;</span>
     </button>
     <div class="side-body">
       <ol class="instructions-list">
@@ -906,7 +930,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <li><b>Should I Repeat?</b> — for any course under 4.00, see the maximum CGPA you could reach with vs. without repeating it, and exactly how many points that's worth, ranked by impact if you have more than one. This tab is pure analysis — decide here, then go implement the repeat yourself in Semester Wise CGPA.</li>
       </ol>
       <div class="note">Look for <b>"Show the math"</b> under any CGPA figure to see the exact calculation behind it, step by step.</div>
-      <div class="note">Your plan is auto-saved <b>locally in this browser</b> (nothing is ever uploaded or sent anywhere) so it survives a refresh. Use <b>Settings (&#9881;)</b> in the header to back up your plan to a file, load one back in, switch to a shorter Compact layout on a phone, or wipe everything and start over.</div>
+      <div class="note">Your plan is auto-saved <b>locally in this browser</b> (nothing is ever uploaded or sent anywhere) so it survives a refresh. Use <b>Settings</b> in the header to back up your plan to a file, load one back in, switch to a shorter Compact layout on a phone, or wipe everything and start over.</div>
       <div class="note">Once your plan is filled in, print or save it as a PDF from the bottom of <b>Semester Wise CGPA</b> — styled after BRACU's own gradesheet layout.</div>
     </div>
   </div>
@@ -959,7 +983,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
       <div class="gradesheet-drop" id="gradesheetDrop">
         <input type="file" id="gradesheetFile" accept="application/pdf,.pdf" style="display:none;">
-        <div class="gradesheet-drop-icon">📄</div>
+        <div class="gradesheet-drop-icon"><img class="icon-3d-lg" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Page%20facing%20up/3D/page_facing_up_3d.png" alt="" onerror="this.remove()"></div>
         <div><b>Click to choose your gradesheet PDF</b>, or drag it here.</div>
         <div class="repeat-meta">Only a BRACU "GRADE SHEET — UNOFFICIAL COPY" export is supported right now.</div>
       </div>
@@ -1021,7 +1045,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div class="policy-block policy-tabgroup" id="retakeRepeatPolicyBlock">
         <div class="side-card collapsed">
           <button class="side-head" type="button" data-side-toggle>
-            <span>📋 Retake policy — for an F grade</span><span class="chev">&#9660;</span>
+            <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" alt="" onerror="this.remove()"> Retake policy — for an F grade</span><span class="chev">&#9660;</span>
           </button>
           <div class="side-body">
             <ul>
@@ -1035,7 +1059,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
         <div class="side-card collapsed">
           <button class="side-head" type="button" data-side-toggle>
-            <span>📋 Repeat policy — improving a passing grade</span><span class="chev">&#9660;</span>
+            <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" alt="" onerror="this.remove()"> Repeat policy — improving a passing grade</span><span class="chev">&#9660;</span>
           </button>
           <div class="side-body">
             <ul>
@@ -1069,7 +1093,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <button class="btn small" id="btnAddSemester" type="button" title="Not everyone finishes in 12 semesters — add another if you need it">+ Add another semester</button>
       </div>
       <div class="util-card util-card--elective">
-        <div class="util-card-title"><span class="util-card-icon">&#127919;</span> Program Elective Focus</div>
+        <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Bullseye/3D/bullseye_3d.png" alt="" onerror="this.remove()"> Program Elective Focus</div>
         <div class="util-card-body">
           <select id="preferredElectiveAreaSelect">
             <option value="">Not decided yet — show all areas as usual</option>
@@ -1096,12 +1120,12 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div id="semesterViewBody"></div>
 
       <button class="print-export-toggle" id="btnTogglePrintExport" type="button">
-        <span>&#128424; Name / Student ID, print &amp; export</span><span class="chev">&#9660;</span>
+        <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Printer/3D/printer_3d.png" alt="" onerror="this.remove()"> Name / Student ID, print &amp; export</span><span class="chev">&#9660;</span>
       </button>
 
       <div class="print-export-section" id="printExportSection">
         <div class="util-card util-card--student">
-          <div class="util-card-title"><span class="util-card-icon">&#128100;</span> Name &amp; Student ID</div>
+          <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Bust%20in%20silhouette/3D/bust_in_silhouette_3d.png" alt="" onerror="this.remove()"> Name &amp; Student ID</div>
           <div class="util-card-body">
             <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
             <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
@@ -1110,7 +1134,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         </div>
 
         <div class="util-card util-card--fill">
-          <div class="util-card-title"><span class="util-card-icon">&#9889;</span> Bulk-Fill Remaining Courses</div>
+          <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/High%20voltage/3D/high_voltage_3d.png" alt="" onerror="this.remove()"> Bulk-Fill Remaining Courses</div>
           <div class="util-card-body">
             <span>Set every still-ungraded course to:</span>
             <select id="fillRestGradeSelect">
@@ -1122,14 +1146,14 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         </div>
 
         <div class="util-card util-card--print">
-          <div class="util-card-title"><span class="util-card-icon">&#128424;</span> Print / Export</div>
+          <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Printer/3D/printer_3d.png" alt="" onerror="this.remove()"> Print / Export</div>
           <div class="util-card-body">
           <span>Planned your whole journey? Print or save it:</span>
           <select id="printLayoutSelect">
             <option value="compact">Layout: Compact table</option>
             <option value="cards">Layout: Per-semester cards</option>
           </select>
-          <button class="btn small" id="btnPrintPlan" type="button">🖨 Print / Save PDF</button>
+          <button class="btn small" id="btnPrintPlan" type="button"><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Printer/3D/printer_3d.png" alt="" onerror="this.remove()"> Print / Save PDF</button>
           </div>
         </div>
       </div>
@@ -1183,7 +1207,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   </div>
 
   <div class="disclaimer-banner">
-    <span class="db-icon">&#9888;</span>
+    <span class="db-icon"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Warning/3D/warning_3d.png" alt="" onerror="this.remove()"></span>
     <span><b>Unofficial student-built tool.</b> This is not run by BRAC University and its results are estimates, not official records. Curriculum, credits and policies change — always confirm your CGPA, credits and any repeat/retake decision with your <b>academic advisor, the Registrar, or your official gradesheet</b> before registering for anything. Policy details are summarised from BRACU's published <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a>.</span>
   </div>
 
@@ -1197,12 +1221,12 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       Policies and grading scale sourced from BRAC University's published
       <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a>.
       This is an unofficial student-built tool — always confirm against your own advising sheet and the Registrar before making registration decisions.
-      Need to back up, restore, or wipe your data? Use <button type="button" class="link-btn" id="btnFooterOpenSettings">Settings (&#9881;)</button> in the header.
+      Need to back up, restore, or wipe your data? Use <button type="button" class="link-btn" id="btnFooterOpenSettings">Settings</button> in the header.
     </div>
   </div>
 
   <button class="compact-aside-toggle" id="btnToggleAside" type="button">
-    <span>&#128218; Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
+    <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Books/3D/books_3d.png" alt="" onerror="this.remove()"> Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
   </button>
 
   </main>
@@ -1270,7 +1294,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
 <div class="confirm-modal-overlay" id="compactModeDialogOverlay">
   <div class="confirm-modal compact-mode-dialog">
-    <div class="compact-mode-dialog-icon">📱</div>
+    <div class="compact-mode-dialog-icon"><img class="icon-3d-lg" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Mobile%20phone/3D/mobile_phone_3d.png" alt="" onerror="this.remove()"></div>
     <h3>Hi! Are you visiting from a phone?</h3>
     <div class="note" style="font-size:14px;line-height:1.65;">
       If you're on an Android phone or an iPhone, we can switch to a simpler, shorter layout made for smaller screens — the reference info and print/export options just tuck behind a tap so you spend less time scrolling and more time on your grades.
@@ -1297,16 +1321,16 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
 <div class="confirm-modal-overlay" id="settingsModalOverlay">
   <div class="confirm-modal settings-modal">
-    <h3>&#9881; Settings</h3>
+    <h3><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" alt="" onerror="this.remove()"> Settings</h3>
     <div class="settings-section">
-      <h4>&#127912; Display</h4>
+      <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Artist%20palette/3D/artist_palette_3d.png" alt="" onerror="this.remove()"> Display</h4>
       <label class="settings-checkbox-row">
         <input type="checkbox" id="chkCompactMode">
         <span><b>Compact Mode</b> — a shorter, simplified layout for phones: hides the reference sidebar and print/export controls behind a tap, so entering grades takes less scrolling.</span>
       </label>
     </div>
-    <div class="settings-section" style="--settings-accent:var(--teal);">
-      <h4>&#128190; Your data</h4>
+    <div class="settings-section" style="--settings-accent:var(--teal);--settings-accent-soft:var(--teal-soft);">
+      <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Floppy%20disk/3D/floppy_disk_3d.png" alt="" onerror="this.remove()"> Your data</h4>
       <div class="note">Everything lives only in this browser's local storage. Back it up to a file, or move it to another device/browser.</div>
       <div class="footer-actions" style="margin-top:8px;">
         <button class="btn small" id="btnExportData" type="button">&#11015; Download my plan (.json)</button>
@@ -1316,10 +1340,10 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div id="settingsDataNote" class="repeat-meta" style="margin-top:6px;"></div>
     </div>
     <div class="settings-section danger-zone">
-      <h4>&#9888; Danger zone</h4>
+      <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Warning/3D/warning_3d.png" alt="" onerror="this.remove()"> Danger zone</h4>
       <div class="note">Wipes every grade, plan and preference from this browser. Can't be undone — export first if unsure.</div>
       <div class="footer-actions" style="margin-top:8px;">
-        <button class="btn small footer-danger" id="btnReset" type="button">&#128465; Hard Reset (clear everything)</button>
+        <button class="btn small footer-danger" id="btnReset" type="button"><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Wastebasket/3D/wastebasket_3d.png" alt="" onerror="this.remove()"> Hard Reset (clear everything)</button>
       </div>
     </div>
     <div class="footer-actions" style="justify-content:flex-end;margin-top:16px;">
@@ -2356,7 +2380,7 @@ let howtoDismissed = false; // Semester Wise tab's quick-start walkthrough — d
 // setting: each block is its own independent toggle.
 function renderMathDetails(titleHtml, tableRowsHtml, tableHeadHtml, formulaHtml){
   return `<details class="math-details">
-    <summary>&#129518; Show the math${titleHtml ? " — "+titleHtml : ""}</summary>
+    <summary><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Abacus/3D/abacus_3d.png" alt="" onerror="this.remove()"> Show the math${titleHtml ? " — "+titleHtml : ""}</summary>
     <table class="math-table"><thead><tr>${tableHeadHtml}</tr></thead><tbody>${tableRowsHtml}</tbody></table>
     <div class="math-formula">${formulaHtml}</div>
   </details>`;
@@ -4159,7 +4183,9 @@ function applyTheme(){
   document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
   const icon = document.getElementById("themeToggleIcon");
   const label = document.getElementById("themeToggleLabel");
-  if(icon) icon.innerHTML = darkMode ? "&#9788;" : "&#9789;";
+  if(icon) icon.src = darkMode
+    ? "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sun/3D/sun_3d.png"
+    : "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Crescent%20moon/3D/crescent_moon_3d.png";
   if(label) label.textContent = darkMode ? "Light" : "Dark";
 }
 document.getElementById("btnThemeToggle").addEventListener("click", ()=>{
