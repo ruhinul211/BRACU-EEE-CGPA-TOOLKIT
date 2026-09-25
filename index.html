@@ -700,11 +700,14 @@ body.compact-mode .tab-panel{order:-80;}
 body.compact-mode #howCalcBlock{order:-70;}
 body.compact-mode #retakeRepeatPolicyBlock,
 body.compact-mode .disclaimer-banner{order:-60;}
+/* Moved ahead of even the "New here?" card, per explicit request: the
+   CGPA/credits recap must be visible the instant the page loads, with
+   nothing to scroll past — not just earlier than the tab content. */
 body.compact-mode .stats-grid,
 body.compact-mode .credit-progress-wrap,
 body.compact-mode .standing-strip,
 body.compact-mode #overallMathBox,
-body.compact-mode #contextHint{order:-50;}
+body.compact-mode #contextHint{order:-95;}
 body.compact-mode .stats-grid .stat-value{font-size:20px;font-weight:700;}
 body.compact-mode .stats-grid .stat-label{font-size:10px;}
 body.compact-mode .credit-progress-label{font-size:11px;font-weight:700;}
