@@ -673,11 +673,24 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .settings-checkbox-row b{color:var(--text);}
 
 /* ---------- Compact Mode (phones) ---------- */
-.compact-mode-banner{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:11px 16px;margin:14px 0 0;border-radius:var(--radius-md);
-  background:var(--accent-soft);border:1px solid var(--accent);font-size:13px;
+.compact-mode-dialog{
+  max-width:min(94vw,440px);width:100%;text-align:center;
+  padding:32px 26px;max-height:88vh;overflow-y:auto;
 }
+.compact-mode-dialog-icon{font-size:44px;line-height:1;margin-bottom:6px;}
+.compact-mode-dialog h3{font-size:19px;margin:0 0 12px;}
+.compact-mode-dialog-actions{flex-direction:column;margin-top:22px;}
+.compact-mode-dialog-actions .btn{width:100%;padding:12px 16px;font-size:14px;}
+
+/* On a phone, the raw calculator is the thing most people came here to use —
+   everything else (stats, academic standing, the tab strip, other tools)
+   is reordered to sit below it instead of forcing a scroll past all of it
+   first. Only .main-col needs to become a flex column for `order` to work;
+   nothing here changes which panel is actually active/visible. */
+body.compact-mode .main-col{display:flex;flex-direction:column;}
+body.compact-mode .main-col > *{order:0;}
+body.compact-mode .tab-panel[data-tab-panel="calc"]{order:-100;}
+
 .compact-aside-toggle{display:none;}
 body.compact-mode .compact-aside-toggle{
   display:flex;align-items:center;justify-content:space-between;width:100%;
@@ -876,13 +889,6 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
   <div id="contextHint" class="context-hint" style="display:none;"></div>
 
-  <div id="compactModeBanner" class="compact-mode-banner" style="display:none;">
-    <span>📱 Looks like you're on a small screen — <b>Compact Mode</b> trims the layout down (hides the reference sidebar and print controls behind a tap) so there's less scrolling.</span>
-    <div class="footer-actions" style="margin-left:auto;">
-      <button class="btn small primary" id="btnEnableCompactMode" type="button">Turn on</button>
-      <button class="btn small" id="btnDismissCompactBanner" type="button">Not now</button>
-    </div>
-  </div>
 
   <div class="tab-bar" role="tablist">
     <button class="tab-btn" data-tab="gradesheet" role="tab" type="button" id="tab-gradesheet" aria-controls="panel-gradesheet" aria-selected="false">Gradesheet Analyzer</button>
@@ -1177,6 +1183,22 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 <div id="printArea"></div>
 <div id="validationToast" class="validation-toast"></div>
 <button class="undo-fab" id="btnUndo" type="button" title="Undo the last change" disabled>&#8617; Undo</button>
+
+<div class="confirm-modal-overlay" id="compactModeDialogOverlay">
+  <div class="confirm-modal compact-mode-dialog">
+    <div class="compact-mode-dialog-icon">📱</div>
+    <h3>Hi! Are you visiting from a phone?</h3>
+    <div class="note" style="font-size:14px;line-height:1.65;">
+      If you're on an Android phone or an iPhone, we can switch to a simpler, shorter layout made for smaller screens — the reference info and print/export options just tuck behind a tap so you spend less time scrolling and more time on your grades.
+      <br><br>
+      You can always change this later in Settings.
+    </div>
+    <div class="footer-actions compact-mode-dialog-actions">
+      <button class="btn primary" id="btnEnableCompactMode" type="button">Yes, I'm on Android/iOS — use the simpler layout</button>
+      <button class="btn" id="btnDismissCompactBanner" type="button">No thanks, keep the full layout</button>
+    </div>
+  </div>
+</div>
 
 <div class="confirm-modal-overlay" id="confirmModalOverlay">
   <div class="confirm-modal">
@@ -3987,13 +4009,17 @@ document.getElementById("btnUndo").addEventListener("click", undoLastChange);
 applyTheme();
 
 /* ============================= COMPACT MODE (phones) ============================= */
-// A same-site, same-file mode — never a separate build — that hides the two
-// least phone-friendly sections (the reference sidebar and print/export)
-// behind a one-tap disclosure, and tightens spacing generally. Persisted
-// like darkMode; also auto-suggested once via a dismissible banner for
-// anyone landing here on a narrow screen for the first time.
+// A same-site, same-file mode — never a separate build — that reorders the
+// quick calculator to the very top (nothing else to scroll past) and hides
+// the reference sidebar and print/export behind a one-tap disclosure.
+// Persisted like darkMode; also asked about once via a full dialog for
+// anyone landing here on a phone-shaped screen for the first time — asked
+// plainly ("are you on Android/iPhone?") rather than inferred silently, and
+// gated on an actual mobile-OS user agent so a merely-narrow desktop window
+// never gets asked a question that wouldn't make sense for it.
 let compactMode = false;
 let compactModePrompted = false;
+const IS_MOBILE_OS = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 function applyCompactMode(){
   document.body.classList.toggle("compact-mode", compactMode);
@@ -4001,10 +4027,13 @@ function applyCompactMode(){
   if(chk) chk.checked = compactMode;
 }
 function maybeSuggestCompactMode(){
-  const banner = document.getElementById("compactModeBanner");
-  if(!banner) return;
-  if(compactMode || compactModePrompted || window.innerWidth > 640){ banner.style.display = "none"; return; }
-  banner.style.display = "flex";
+  const overlay = document.getElementById("compactModeDialogOverlay");
+  if(!overlay) return;
+  if(compactMode || compactModePrompted || !IS_MOBILE_OS || window.innerWidth > 640){
+    overlay.classList.remove("show");
+    return;
+  }
+  overlay.classList.add("show");
 }
 document.getElementById("chkCompactMode").addEventListener("change", (e)=>{
   compactMode = e.target.checked;
@@ -4015,12 +4044,12 @@ document.getElementById("btnEnableCompactMode").addEventListener("click", ()=>{
   compactMode = true;
   compactModePrompted = true;
   applyCompactMode();
-  document.getElementById("compactModeBanner").style.display = "none";
+  document.getElementById("compactModeDialogOverlay").classList.remove("show");
   saveState();
 });
 document.getElementById("btnDismissCompactBanner").addEventListener("click", ()=>{
   compactModePrompted = true;
-  document.getElementById("compactModeBanner").style.display = "none";
+  document.getElementById("compactModeDialogOverlay").classList.remove("show");
   saveState();
 });
 document.getElementById("btnToggleAside").addEventListener("click", (e)=>{
@@ -4036,6 +4065,23 @@ document.getElementById("btnTogglePrintExport").addEventListener("click", (e)=>{
   if(section) section.classList.toggle("expanded");
 });
 window.addEventListener("resize", maybeSuggestCompactMode);
+
+// Mobile virtual keyboards fire a regular "Enter" keydown for their Go/Done/
+// Next action key on text and number fields — blurring the field there closes
+// the keyboard immediately, instead of making the student hit the device's
+// own back button to dismiss it. Delegated on document so it covers every
+// input added now or later (course search, credit/CGPA fields, Name/Student
+// ID, etc.) without wiring each one by hand; runs after any field-specific
+// Enter handling (e.g. the course combo's own selection logic), so it never
+// interferes with what Enter already does there — it just also closes the
+// keyboard afterward.
+document.addEventListener("keydown", (e)=>{
+  if(e.key !== "Enter") return;
+  const t = e.target;
+  if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA") && t.type!=="button" && t.type!=="submit"){
+    t.blur();
+  }
+});
 
 /* ============================= FOOTER ============================= */
 
