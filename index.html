@@ -759,17 +759,18 @@ body.compact-mode #heroCompactStatsSlot + .stats-grid .stat-label{
   font-size:9px;color:rgba(234,242,255,0.65);text-transform:uppercase;letter-spacing:0.03em;
 }
 
-.compact-aside-toggle{display:none;}
-body.compact-mode .compact-aside-toggle{
+.compact-aside-toggle{
   display:flex;align-items:center;justify-content:space-between;width:100%;
-  margin-top:20px;padding:12px 16px;font-family:var(--font-body);font-weight:600;font-size:13.5px;
+  margin:0 0 16px;padding:12px 16px;font-family:var(--font-body);font-weight:600;font-size:13.5px;
   background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
   color:var(--text);cursor:pointer;box-shadow:var(--shadow-card);
 }
-body.compact-mode .compact-aside-toggle .chev{transition:transform .15s ease;}
-body.compact-mode .compact-aside-toggle.expanded .chev{transform:rotate(180deg);}
-body.compact-mode aside.sidebar-right{display:none;}
-body.compact-mode aside.sidebar-right.expanded{display:block;margin-top:10px;}
+.compact-aside-toggle .chev{transition:transform .15s ease;}
+.compact-aside-toggle.expanded .chev{transform:rotate(180deg);}
+aside.sidebar-right{display:none;}
+aside.sidebar-right.expanded{display:block;}
+.layout{grid-template-columns:minmax(0,1fr);}
+.layout.aside-open{grid-template-columns:minmax(0,1fr) 280px;}
 body.compact-mode .print-export-section{display:none;}
 body.compact-mode .print-export-section.expanded{display:block;}
 body.compact-mode .print-export-toggle{
@@ -917,15 +918,15 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
     </button>
     <div class="side-body">
       <ol class="instructions-list">
-        <li><b>Gradesheet Analyzer</b> — the fastest way to start if you've already completed a semester or two. Upload your BRACU unofficial gradesheet PDF and it reads your courses, grades and semester structure straight off it — parsed entirely in your browser — and auto-fills Semester Wise CGPA for you. Anything it can't confidently place gets flagged so you can fix it by hand instead of silently guessing.</li>
-        <li><b>Calculate Raw CGPA</b> — quickest manual option if you don't have a gradesheet handy. Enter your current CGPA and completed credits (both <b>0</b> if this is your first semester), how many courses you're taking, then a grade for each. No course names needed.</li>
-        <li><b>Semester Wise CGPA</b> — the detailed option, and the one that overrides everything else. Plan the real Version&nbsp;3 sequence course by course, add/remove/swap anything, and add semesters beyond 12 if you need them; fill it in and the whole site updates from it. Retaking or repeating a course is auto-detected the moment you pick the same course again in a later semester — no manual tagging needed.</li>
-        <li><b>Horizon</b> — set a target CGPA and see the average you'd need across your remaining credits, try your own mix of grades, or find out which future semester you'd actually cross your target at that pace. Also shows your CGPA trend so far.</li>
-        <li><b>Should I Repeat?</b> — for any course under 4.00, see the maximum CGPA you could reach with vs. without repeating it, and exactly how many points that's worth, ranked by impact if you have more than one. This tab is pure analysis — decide here, then go implement the repeat yourself in Semester Wise CGPA.</li>
+        <li><b>Gradesheet Analyzer</b> — fastest start if you've done a semester or two. Upload your BRACU unofficial gradesheet PDF; it's parsed in-browser and auto-fills Semester Wise CGPA. Anything unclear gets flagged, not guessed.</li>
+        <li><b>Calculate Raw CGPA</b> — quick manual option, no course names. Enter current CGPA + completed credits (0/0 if first semester), course count, then a grade each.</li>
+        <li><b>Semester Wise CGPA</b> — the detailed option that overrides the rest. Plan the real V3 sequence course-by-course, add/remove/swap freely. Retakes/repeats auto-detect when you pick the same course again later.</li>
+        <li><b>Horizon</b> — set a target CGPA, see the average you need, try your own grade mix, or find which semester you'd hit it. Also shows your CGPA trend.</li>
+        <li><b>Should I Repeat?</b> — for any course under 4.00, see max CGPA with vs. without repeating it, ranked by impact. Pure analysis — implement the repeat in Semester Wise CGPA.</li>
       </ol>
-      <div class="note">Look for <b>"Show the math"</b> under any CGPA figure to see the exact calculation behind it, step by step.</div>
-      <div class="note">Your plan is auto-saved <b>locally in this browser</b> (nothing is ever uploaded or sent anywhere) so it survives a refresh. Use <b>Settings</b> in the header to back up your plan to a file, load one back in, switch to a shorter Compact layout on a phone, or wipe everything and start over.</div>
-      <div class="note">Once your plan is filled in, print or save it as a PDF from the bottom of <b>Semester Wise CGPA</b> — styled after BRACU's own gradesheet layout.</div>
+      <div class="note">"Show the math" under any CGPA figure gives the step-by-step calculation.</div>
+      <div class="note">Auto-saved <b>locally</b>, nothing uploaded. <b>Settings</b> in the header backs up/restores your plan, toggles Compact layout, or wipes everything.</div>
+      <div class="note">Plan filled in? Print/save as PDF from the bottom of <b>Semester Wise CGPA</b>.</div>
     </div>
   </div>
 
@@ -969,6 +970,10 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
     <button class="tab-btn" data-tab="horizon" role="tab" type="button" id="tab-horizon" aria-controls="panel-horizon" aria-selected="false">Horizon</button>
     <button class="tab-btn" data-tab="repeat" role="tab" type="button" id="tab-repeat" aria-controls="panel-repeat" aria-selected="false">Should I Repeat?</button>
   </div>
+
+  <button class="compact-aside-toggle" id="btnToggleAside" type="button">
+    <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Books/3D/books_3d.png" alt="" onerror="this.remove()"> Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
+  </button>
 
   <div class="tab-panel" data-tab-panel="gradesheet" id="panel-gradesheet" role="tabpanel" aria-labelledby="tab-gradesheet" tabindex="0">
     <div class="panel">
@@ -1215,26 +1220,17 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
   <div class="disclaimer-banner">
     <span class="db-icon"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Warning/3D/warning_3d.png" alt="" onerror="this.remove()"></span>
-    <span><b>Unofficial student-built tool.</b> This is not run by BRAC University and its results are estimates, not official records. Curriculum, credits and policies change — always confirm your CGPA, credits and any repeat/retake decision with your <b>academic advisor, the Registrar, or your official gradesheet</b> before registering for anything. Policy details are summarised from BRACU's published <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a>.</span>
+    <span><b>Unofficial student-built tool</b> — not run by BRAC University; results are estimates, not official records. Confirm CGPA, credits and repeat/retake decisions with your <b>advisor, the Registrar, or your official gradesheet</b>. Policy details summarised from BRACU's published <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a>.</span>
   </div>
 
   <div class="footer-note">
     <div class="note disclaimer">
-      <b>Generated by the EEE CGPA Toolkit</b> — an unofficial, student-built calculator, not affiliated with, produced by, or endorsed by BRAC University.
-      Built by <a href="https://www.linkedin.com/in/ruhinul-haque-bhuiyan/" target="_blank" rel="noopener">Ruhinul Haque Bhuiyan</a>.
-      Found a bug, or have a suggestion? Email <a href="mailto:ruhinul0025@gmail.com">ruhinul0025@gmail.com</a>.
-      Runs entirely in your browser — your plan auto-saves to this device's local storage so refreshing won't lose it, but nothing is ever uploaded or sent to any server.
-      Course list and credits: BRACU School of Engineering — Recommended Course Sequence &amp; Degree Requirements (Version 3, effective Spring 2020 intake).
-      Policies and grading scale sourced from BRAC University's published
-      <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a>.
-      This is an unofficial student-built tool — always confirm against your own advising sheet and the Registrar before making registration decisions.
-      Need to back up, restore, or wipe your data? Use <button type="button" class="link-btn" id="btnFooterOpenSettings">Settings</button> in the header.
+      <b>EEE CGPA Toolkit</b> — unofficial, student-built, not affiliated with BRAC University. Built by <a href="https://www.linkedin.com/in/ruhinul-haque-bhuiyan/" target="_blank" rel="noopener">Ruhinul Haque Bhuiyan</a>. Bugs/suggestions: <a href="mailto:ruhinul0025@gmail.com">ruhinul0025@gmail.com</a>.
+      Runs fully in-browser — your plan auto-saves locally, nothing is uploaded.
+      Courses: BRACU School of Engineering Recommended Sequence &amp; Degree Requirements (V3, Spring 2020+). Policies &amp; grading scale from BRACU's published <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a> — always confirm against your advising sheet and the Registrar before registering.
+      Back up, restore, or wipe your data via <button type="button" class="link-btn" id="btnFooterOpenSettings">Settings</button>.
     </div>
   </div>
-
-  <button class="compact-aside-toggle" id="btnToggleAside" type="button">
-    <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Books/3D/books_3d.png" alt="" onerror="this.remove()"> Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
-  </button>
 
   </main>
 
@@ -4297,8 +4293,10 @@ document.getElementById("btnDismissCompactBanner").addEventListener("click", ()=
 document.getElementById("btnToggleAside").addEventListener("click", (e)=>{
   const btn = e.currentTarget;
   const aside = document.querySelector("aside.sidebar-right");
+  const layout = document.querySelector(".layout");
   btn.classList.toggle("expanded");
   if(aside) aside.classList.toggle("expanded");
+  if(layout) layout.classList.toggle("aside-open");
 });
 document.getElementById("btnTogglePrintExport").addEventListener("click", (e)=>{
   const btn = e.currentTarget;
@@ -4377,6 +4375,8 @@ function hardResetEverything(){
   if(gsResult) gsResult.innerHTML = "";
   if(gsStatus) gsStatus.textContent = "";
   document.querySelectorAll(".compact-aside-toggle, .print-export-toggle, aside.sidebar-right, .print-export-section").forEach(el=>el.classList.remove("expanded"));
+  const layoutEl = document.querySelector(".layout");
+  if(layoutEl) layoutEl.classList.remove("aside-open");
   render();
   flashInfoToast("Everything's been reset.");
 }
