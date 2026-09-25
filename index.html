@@ -627,6 +627,13 @@ tr.row-flash{animation:rowflash 1.6s ease;}
   font-size:12.5px;color:var(--text-dim);
 }
 .fill-rest-row select{width:auto;min-width:150px;padding:6px 9px;font-size:12.5px;}
+.elective-focus-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 16px;margin:10px 0 0;
+  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
+  font-size:12.5px;color:var(--text-dim);
+}
+.elective-focus-row select{width:auto;min-width:230px;padding:6px 9px;font-size:12.5px;}
 
 .validation-toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
@@ -1056,6 +1063,13 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <button class="btn small" id="btnNextSem" type="button">Next →</button>
         <button class="btn small" id="btnAddSemester" type="button" title="Not everyone finishes in 12 semesters — add another if you need it">+ Add another semester</button>
       </div>
+      <div class="elective-focus-row">
+        <span>Program Elective focus:</span>
+        <select id="preferredElectiveAreaSelect">
+          <option value="">Not decided yet — show all areas as usual</option>
+        </select>
+        <span class="repeat-meta">Reorders the course picker for Program Elective slots to show your area first. Doesn't restrict what you can pick, or affect your CGPA.</span>
+      </div>
       <div class="note" style="margin-top:10px;">
         This tab defaults to the official Version 3 recommended sequence and its 12 semesters, but nothing here is locked: add, remove, or swap any course in any semester, and add semesters beyond 12 if your own journey runs longer. What matters for graduation is reaching <b>136 total credits</b>, not matching this layout exactly.
         Also note: this semester-by-semester structure reflects <b>Version 3</b> only, effective for student intake from <b>Spring 2020 onward</b> — if you enrolled before that, your curriculum differs and this tab won't line up with your actual gradesheet.
@@ -1274,13 +1288,6 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <input type="checkbox" id="chkCompactMode">
         <span><b>Compact Mode</b> — a shorter, simplified layout for phones: hides the reference sidebar and print/export controls behind a tap, so entering grades takes less scrolling.</span>
       </label>
-    </div>
-    <div class="settings-section">
-      <h4>Program Elective focus</h4>
-      <div class="note">Picking one just reorders the course picker for Program Elective slots — your chosen area shows first instead of always Power, so you're not scrolling through every specialization to find yours. It doesn't lock anything in or affect your CGPA; you can still pick any course from any area.</div>
-      <select id="preferredElectiveAreaSelect" style="margin-top:8px;width:100%;">
-        <option value="">Not decided yet — show all areas as usual</option>
-      </select>
     </div>
     <div class="settings-section">
       <h4>Your data</h4>
