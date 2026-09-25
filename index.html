@@ -682,24 +682,28 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .compact-mode-dialog-actions{flex-direction:column;margin-top:22px;}
 .compact-mode-dialog-actions .btn{width:100%;padding:12px 16px;font-size:14px;}
 
-/* Phone first-glance, no scrolling: 1) hero, with the credits/current/max
-   recap moved INTO its blue region (a real DOM move via JS — .stats-grid
-   lives outside .main-col entirely, so `order` can't reach it there; see
+/* Phone reading order: 1) hero, with the credits/current/max recap moved
+   INTO its blue region (a real DOM move via JS — .stats-grid lives outside
+   .main-col entirely, so `order` can't reach it there; see
    relocateForCompactMode). The hero's own big CGPA number+label is hidden
    in favor of that recap, so nothing repeats itself or says "no grades
-   entered yet" twice. 2) "New here?" walkthrough. 3) the 5 tabs, opened to
-   Raw CGPA. Academic standing, the credit progress bar, the math
-   breakdown and the context hint are NOT part of the first-glance set —
-   they fall through to the same default-order tier as the footer, so they
-   still exist, just further down. #howCalcBlock and #retakeRepeatPolicyBlock
-   normally live inside the calc tab-panel; JS relocates them the same way,
-   each leaving a slot behind so turning Compact Mode back off restores
-   everything to exactly where it started. */
+   entered yet" twice. 2) "New here?" walkthrough. 3) the context hint
+   ("Nothing entered yet — fastest path…"). 4) the 5 tabs, opened to Raw
+   CGPA. 5) Academic standing, right after the calculator's own result —
+   not buried down with the footer. 6) how BRACU calculates it. 7) retake/
+   repeat policy + the unofficial-tool disclaimer. Everything else (credit
+   progress bar, math breakdown, footer) falls through to the default-order
+   tier. #howCalcBlock and #retakeRepeatPolicyBlock normally live inside the
+   calc tab-panel; JS relocates them the same way, each leaving a slot
+   behind so turning Compact Mode back off restores everything to exactly
+   where it started. */
 body.compact-mode .main-col{display:flex;flex-direction:column;}
 body.compact-mode .main-col > *{order:0;}
 body.compact-mode #howToCard{order:-90;}
+body.compact-mode #contextHint{order:-85;}
 body.compact-mode .tab-bar,
 body.compact-mode .tab-panel{order:-80;}
+body.compact-mode .standing-strip{order:-75;}
 body.compact-mode #howCalcBlock{order:-70;}
 body.compact-mode #retakeRepeatPolicyBlock,
 body.compact-mode .disclaimer-banner{order:-60;}
@@ -4133,21 +4137,36 @@ document.getElementById("btnTogglePrintExport").addEventListener("click", (e)=>{
 });
 window.addEventListener("resize", maybeSuggestCompactMode);
 
-// Mobile virtual keyboards fire a regular "Enter" keydown for their Go/Done/
-// Next action key on text and number fields — blurring the field there closes
-// the keyboard immediately, instead of making the student hit the device's
-// own back button to dismiss it. Delegated on document so it covers every
-// input added now or later (course search, credit/CGPA fields, Name/Student
-// ID, etc.) without wiring each one by hand; runs after any field-specific
-// Enter handling (e.g. the course combo's own selection logic), so it never
-// interferes with what Enter already does there — it just also closes the
-// keyboard afterward.
+// Closing the mobile keyboard without the student having to hit the
+// device's own back button. Two mechanisms, because relying on either
+// alone is exactly the bug that was reported:
+//  1) Enter/Done — works when the keyboard sends one, but plenty of mobile
+//     numeric keypads (Android's in particular, for type="number") have no
+//     action key that fires a real "Enter" keydown at all, so this alone
+//     silently did nothing for most of the number fields in this app.
+//  2) A short debounce after typing stops, on plain text/number fields —
+//     catches every case (1) can't, including bare numeric keypads. Search/
+//     autocomplete fields (course search, semester search) are excluded:
+//     blurring mid-typing there would close the dropdown while the student
+//     is still picking a course.
 document.addEventListener("keydown", (e)=>{
   if(e.key !== "Enter") return;
   const t = e.target;
   if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA") && t.type!=="button" && t.type!=="submit"){
     t.blur();
   }
+});
+const KEYBOARD_AUTOCLOSE_EXCLUDE = ".course-combo-search, .combo-input";
+let _kbAutoCloseTimer = null;
+document.addEventListener("input", (e)=>{
+  const t = e.target;
+  if(!t || t.tagName!=="INPUT") return;
+  if(t.type!=="number" && t.type!=="text") return;
+  if(t.matches(KEYBOARD_AUTOCLOSE_EXCLUDE)) return;
+  clearTimeout(_kbAutoCloseTimer);
+  _kbAutoCloseTimer = setTimeout(()=>{
+    if(document.activeElement===t) t.blur();
+  }, 1200);
 });
 
 /* ============================= FOOTER ============================= */
