@@ -682,16 +682,19 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .compact-mode-dialog-actions{flex-direction:column;margin-top:22px;}
 .compact-mode-dialog-actions .btn{width:100%;padding:12px 16px;font-size:14px;}
 
-/* Phone reading order, top to bottom (hero itself is outside .main-col, so
-   it's already first): 2) "New here?" walkthrough, 3) the 5 tabs, opened to
-   Raw CGPA, 4) how BRACU calculates it, 5) retake/repeat policy + the
-   unofficial-tool disclaimer, 6) a compact CGPA/credits recap, 7) everything
-   else (footer, reference-info toggle, print/export toggle). #howCalcBlock
-   and #retakeRepeatPolicyBlock normally live inside the calc tab-panel —
-   JS (applyCompactMode) physically relocates them to be direct children of
-   .main-col so `order` can place them independently of which tab is open;
-   they always leave a slot element behind so turning Compact Mode back off
-   puts them right back where they came from. */
+/* Phone first-glance, no scrolling: 1) hero, with the credits/current/max
+   recap moved INTO its blue region (a real DOM move via JS — .stats-grid
+   lives outside .main-col entirely, so `order` can't reach it there; see
+   relocateForCompactMode). The hero's own big CGPA number+label is hidden
+   in favor of that recap, so nothing repeats itself or says "no grades
+   entered yet" twice. 2) "New here?" walkthrough. 3) the 5 tabs, opened to
+   Raw CGPA. Academic standing, the credit progress bar, the math
+   breakdown and the context hint are NOT part of the first-glance set —
+   they fall through to the same default-order tier as the footer, so they
+   still exist, just further down. #howCalcBlock and #retakeRepeatPolicyBlock
+   normally live inside the calc tab-panel; JS relocates them the same way,
+   each leaving a slot behind so turning Compact Mode back off restores
+   everything to exactly where it started. */
 body.compact-mode .main-col{display:flex;flex-direction:column;}
 body.compact-mode .main-col > *{order:0;}
 body.compact-mode #howToCard{order:-90;}
@@ -700,17 +703,24 @@ body.compact-mode .tab-panel{order:-80;}
 body.compact-mode #howCalcBlock{order:-70;}
 body.compact-mode #retakeRepeatPolicyBlock,
 body.compact-mode .disclaimer-banner{order:-60;}
-/* Moved ahead of even the "New here?" card, per explicit request: the
-   CGPA/credits recap must be visible the instant the page loads, with
-   nothing to scroll past — not just earlier than the tab content. */
-body.compact-mode .stats-grid,
-body.compact-mode .credit-progress-wrap,
-body.compact-mode .standing-strip,
-body.compact-mode #overallMathBox,
-body.compact-mode #contextHint{order:-95;}
-body.compact-mode .stats-grid .stat-value{font-size:20px;font-weight:700;}
-body.compact-mode .stats-grid .stat-label{font-size:10px;}
-body.compact-mode .credit-progress-label{font-size:11px;font-weight:700;}
+
+body.compact-mode .cgpa-block{display:none;}
+body.compact-mode #heroCompactStatsSlot + .stats-grid{
+  display:flex;gap:0;margin-top:14px;border:none;background:none;
+  box-shadow:none;border-radius:0;border-top:1px solid rgba(234,242,255,0.18);padding-top:12px;
+}
+body.compact-mode #heroCompactStatsSlot + .stats-grid .stat-cell{
+  flex:1 1 0;padding:0;border:none;text-align:center;background:none;
+}
+body.compact-mode #heroCompactStatsSlot + .stats-grid .stat-cell + .stat-cell{
+  border-left:1px solid rgba(234,242,255,0.18);
+}
+body.compact-mode #heroCompactStatsSlot + .stats-grid .stat-value{
+  font-size:17px;font-weight:700;color:#eaf2ff;
+}
+body.compact-mode #heroCompactStatsSlot + .stats-grid .stat-label{
+  font-size:9px;color:rgba(234,242,255,0.65);text-transform:uppercase;letter-spacing:0.03em;
+}
 
 .compact-aside-toggle{display:none;}
 body.compact-mode .compact-aside-toggle{
@@ -855,6 +865,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <div class="cgpa-label" id="heroCgpaLabel">Current CGPA</div>
       </div>
     </div>
+    <div id="heroCompactStatsSlot"></div>
     <div class="neon-tagline">EEE Dept. CGPA Calculation Made Easy!</div>
   </div>
 </header>
@@ -879,7 +890,8 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
     </div>
   </div>
 
-  <div class="stats-grid">
+  <div id="statsGridSlot"></div>
+  <div class="stats-grid" id="statsGrid">
     <div class="stat-cell">
       <div class="stat-value" id="statCredits">0 / 0</div>
       <div class="stat-label">Credits graded / planned</div>
@@ -4066,6 +4078,20 @@ function relocateForCompactMode(){
       if(block.parentElement === mainCol) slot.after(block);
     }
   });
+  // The credits/current/max recap moves INTO the hero itself (a different
+  // ancestor entirely, outside .main-col) so it's part of the same blue
+  // region the student sees first — CSS `order` can't reach across that
+  // boundary, so this one's a real move rather than just a reorder.
+  const stats = document.getElementById("statsGrid");
+  const statsSlot = document.getElementById("statsGridSlot");
+  const heroSlot = document.getElementById("heroCompactStatsSlot");
+  if(stats && statsSlot && heroSlot){
+    if(compactMode){
+      if(stats.parentElement !== heroSlot.parentElement) heroSlot.after(stats);
+    } else {
+      if(stats.parentElement === heroSlot.parentElement) statsSlot.after(stats);
+    }
+  }
 }
 function maybeSuggestCompactMode(){
   const overlay = document.getElementById("compactModeDialogOverlay");
