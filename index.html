@@ -188,10 +188,6 @@ h1.hero-title{
   50%{box-shadow:0 0 0 9px transparent, var(--shadow-card);}
 }
 .howto-head{font-size:13.5px !important;background:var(--accent-soft) !important;}
-.howto-video-placeholder{
-  margin-top:12px;padding:16px;text-align:center;border:1.5px dashed var(--card-border);
-  border-radius:var(--radius-md);color:var(--text-dim);font-size:12.5px;background:var(--surface-2);
-}
 
 /* ---------- Gradesheet Analyzer ---------- */
 .gradesheet-drop{
@@ -884,13 +880,15 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
     </button>
     <div class="side-body">
       <ol class="instructions-list">
-        <li><b>Calculate Raw CGPA</b> — quickest option. Enter your current CGPA and completed credits (both <b>0</b> if this is your first semester), how many courses you're taking, then a grade for each. No course names needed.</li>
-        <li><b>Semester Wise CGPA</b> — the detailed option, and the one that overrides everything else. Plan the real Version&nbsp;3 sequence course by course, add/remove/swap anything, and add semesters beyond 12 if you need them; fill it in and the whole site updates from it.</li>
-        <li><b>Horizon</b> — set a target CGPA and see the average you'd need across remaining credits, or try your own mix of grades.</li>
-        <li><b>Should I Repeat?</b> — for any course under 4.00, see the maximum CGPA you could reach with vs. without repeating it, and exactly how many points that's worth. Decide here, then go implement it in Semester Wise CGPA.</li>
+        <li><b>Gradesheet Analyzer</b> — the fastest way to start if you've already completed a semester or two. Upload your BRACU unofficial gradesheet PDF and it reads your courses, grades and semester structure straight off it — parsed entirely in your browser — and auto-fills Semester Wise CGPA for you. Anything it can't confidently place gets flagged so you can fix it by hand instead of silently guessing.</li>
+        <li><b>Calculate Raw CGPA</b> — quickest manual option if you don't have a gradesheet handy. Enter your current CGPA and completed credits (both <b>0</b> if this is your first semester), how many courses you're taking, then a grade for each. No course names needed.</li>
+        <li><b>Semester Wise CGPA</b> — the detailed option, and the one that overrides everything else. Plan the real Version&nbsp;3 sequence course by course, add/remove/swap anything, and add semesters beyond 12 if you need them; fill it in and the whole site updates from it. Retaking or repeating a course is auto-detected the moment you pick the same course again in a later semester — no manual tagging needed.</li>
+        <li><b>Horizon</b> — set a target CGPA and see the average you'd need across your remaining credits, try your own mix of grades, or find out which future semester you'd actually cross your target at that pace. Also shows your CGPA trend so far.</li>
+        <li><b>Should I Repeat?</b> — for any course under 4.00, see the maximum CGPA you could reach with vs. without repeating it, and exactly how many points that's worth, ranked by impact if you have more than one. This tab is pure analysis — decide here, then go implement the repeat yourself in Semester Wise CGPA.</li>
       </ol>
-      <div class="note">Your plan is auto-saved <b>locally in this browser</b> (nothing is ever uploaded or sent anywhere) so it survives a refresh — use "Reset everything" at the bottom of the page to wipe it.</div>
-      <div class="howto-video-placeholder">🎬 Tutorial video coming soon</div>
+      <div class="note">Look for <b>"Show the math"</b> under any CGPA figure to see the exact calculation behind it, step by step.</div>
+      <div class="note">Your plan is auto-saved <b>locally in this browser</b> (nothing is ever uploaded or sent anywhere) so it survives a refresh. Use <b>Settings (&#9881;)</b> in the header to back up your plan to a file, load one back in, switch to a shorter Compact layout on a phone, or wipe everything and start over.</div>
+      <div class="note">Once your plan is filled in, print or save it as a PDF from the bottom of <b>Semester Wise CGPA</b> — styled after BRACU's own gradesheet layout.</div>
     </div>
   </div>
 
