@@ -208,7 +208,6 @@ h1.hero-title{
   transition:border-color .15s ease,background .15s ease;
 }
 .gradesheet-drop:hover, .gradesheet-drop.dragover{border-color:var(--accent);background:var(--accent-soft);}
-.gradesheet-drop-icon{font-size:30px;margin-bottom:8px;}
 .gs-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px;}
 .gs-summary-box{background:var(--surface-2);border:1px solid var(--card-border);border-radius:var(--radius-sm);padding:11px 13px;text-align:center;}
 .gs-summary-box .n{font-family:var(--font-mono);font-weight:600;font-size:20px;color:var(--text);}
@@ -572,7 +571,6 @@ tr.row-flash{animation:rowflash 1.6s ease;}
   background:rgba(217,158,11,0.10);border-color:rgba(217,158,11,0.45);
   border-left-color:#d99e0b;color:#f0d79a;
 }
-.disclaimer-banner .db-icon{font-size:15px;line-height:1.3;flex-shrink:0;}
 .disclaimer-banner b{color:inherit;}
 .disclaimer-banner a{color:inherit;text-decoration:underline;}
 .repeat-meta{font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:3px;}
@@ -642,18 +640,6 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .util-card--print{--util-accent:var(--teal);--util-accent-soft:var(--teal-soft);}
 .util-card--repeat{--util-accent:var(--amber);--util-accent-soft:var(--amber-soft);max-width:420px;}
 
-/* ---------- 3D icons ----------
-   Flat unicode emoji render as tiny, low-contrast glyphs on most platforms
-   (especially Windows) — easy to miss entirely next to bold text. These are
-   Microsoft's own open-source "Fluent 3D" emoji (glossy, rendered look),
-   loaded as small inline images so every option carries the same
-   unmistakable icon regardless of the visitor's OS/browser font. Each
-   silently disappears if it ever fails to load, rather than showing a
-   broken-image glyph. */
-.icon-3d{width:19px;height:19px;vertical-align:-5px;object-fit:contain;display:inline-block;}
-.icon-3d-sm{width:15px;height:15px;vertical-align:-3px;}
-.icon-3d-lg{width:34px;height:34px;vertical-align:-10px;}
-
 .validation-toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
   background:#c92a42;color:#fff;font-family:var(--font-body);font-size:13px;font-weight:600;
@@ -710,7 +696,6 @@ tr.row-flash{animation:rowflash 1.6s ease;}
   max-width:min(94vw,440px);width:100%;text-align:center;
   padding:32px 26px;max-height:88vh;overflow-y:auto;
 }
-.compact-mode-dialog-icon{font-size:44px;line-height:1;margin-bottom:6px;}
 .compact-mode-dialog h3{font-size:19px;margin:0 0 12px;}
 .compact-mode-dialog-actions{flex-direction:column;margin-top:22px;}
 .compact-mode-dialog-actions .btn{width:100%;padding:12px 16px;font-size:14px;}
@@ -886,10 +871,10 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <span>EEE, Version 3</span>
       <div class="hero-eyebrow-actions">
         <button class="theme-toggle" id="btnThemeToggle" type="button" title="Switch between light and dark">
-          <img class="icon-3d-sm" id="themeToggleIcon" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Crescent%20moon/3D/crescent_moon_3d.png" alt="" onerror="this.remove()"> <span id="themeToggleLabel">Dark</span>
+          <span id="themeToggleLabel">Dark</span>
         </button>
         <button class="theme-toggle" id="btnOpenSettings" type="button" title="Settings — data export/import, reset">
-          <img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" alt="" onerror="this.remove()"> Settings
+          Settings
         </button>
       </div>
     </div>
@@ -914,7 +899,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
   <div class="howto-bar side-card howto-card collapsed" id="howToCard">
     <button class="side-head howto-head" id="btnToggleInstructions" type="button">
-      <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Waving%20hand/Default/3D/waving_hand_3d_default.png" alt="" onerror="this.remove()"> New here? Start with this — how the toolkit works</span><span class="chev">&#9660;</span>
+      <span>New here? Start with this — how the toolkit works</span><span class="chev">&#9660;</span>
     </button>
     <div class="side-body">
       <ol class="instructions-list">
@@ -972,7 +957,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   </div>
 
   <button class="compact-aside-toggle" id="btnToggleAside" type="button">
-    <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Books/3D/books_3d.png" alt="" onerror="this.remove()"> Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
+    <span>Reference info — grading scale, academic standing, elective progress</span><span class="chev">&#9660;</span>
   </button>
 
   <div class="tab-panel" data-tab-panel="gradesheet" id="panel-gradesheet" role="tabpanel" aria-labelledby="tab-gradesheet" tabindex="0">
@@ -982,7 +967,6 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
       <div class="gradesheet-drop" id="gradesheetDrop">
         <input type="file" id="gradesheetFile" accept="application/pdf,.pdf" style="display:none;">
-        <div class="gradesheet-drop-icon"><img class="icon-3d-lg" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Page%20facing%20up/3D/page_facing_up_3d.png" alt="" onerror="this.remove()"></div>
         <div><b>Click to choose your gradesheet PDF</b>, or drag it here.</div>
         <div class="repeat-meta">Only a BRACU "GRADE SHEET — UNOFFICIAL COPY" export is supported right now.</div>
       </div>
@@ -1050,7 +1034,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div class="policy-block policy-tabgroup" id="retakeRepeatPolicyBlock">
         <div class="side-card collapsed">
           <button class="side-head" type="button" data-side-toggle>
-            <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" alt="" onerror="this.remove()"> Retake policy — for an F grade</span><span class="chev">&#9660;</span>
+            <span>Retake policy — for an F grade</span><span class="chev">&#9660;</span>
           </button>
           <div class="side-body">
             <ul>
@@ -1064,7 +1048,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
         <div class="side-card collapsed">
           <button class="side-head" type="button" data-side-toggle>
-            <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" alt="" onerror="this.remove()"> Repeat policy — improving a passing grade</span><span class="chev">&#9660;</span>
+            <span>Repeat policy — improving a passing grade</span><span class="chev">&#9660;</span>
           </button>
           <div class="side-body">
             <ul>
@@ -1098,7 +1082,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <button class="btn small" id="btnAddSemester" type="button" title="Not everyone finishes in 12 semesters — add another if you need it">+ Add another semester</button>
       </div>
       <div class="util-card util-card--elective">
-        <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Bullseye/3D/bullseye_3d.png" alt="" onerror="this.remove()"> Program Elective Focus</div>
+        <div class="util-card-title">Program Elective Focus</div>
         <div class="util-card-body">
           <select id="preferredElectiveAreaSelect">
             <option value="">Not decided yet — show all areas as usual</option>
@@ -1130,12 +1114,12 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div id="semesterViewBody"></div>
 
       <button class="print-export-toggle" id="btnTogglePrintExport" type="button">
-        <span><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Printer/3D/printer_3d.png" alt="" onerror="this.remove()"> Name / Student ID, print &amp; export</span><span class="chev">&#9660;</span>
+        <span>Name / Student ID, print &amp; export</span><span class="chev">&#9660;</span>
       </button>
 
       <div class="print-export-section" id="printExportSection">
         <div class="util-card util-card--student">
-          <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Bust%20in%20silhouette/3D/bust_in_silhouette_3d.png" alt="" onerror="this.remove()"> Name &amp; Student ID</div>
+          <div class="util-card-title">Name &amp; Student ID</div>
           <div class="util-card-body">
             <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
             <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
@@ -1144,7 +1128,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         </div>
 
         <div class="util-card util-card--fill">
-          <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/High%20voltage/3D/high_voltage_3d.png" alt="" onerror="this.remove()"> Bulk-Fill Remaining Courses</div>
+          <div class="util-card-title">Bulk-Fill Remaining Courses</div>
           <div class="util-card-body">
             <span>Set every still-ungraded course to:</span>
             <select id="fillRestGradeSelect">
@@ -1156,14 +1140,14 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         </div>
 
         <div class="util-card util-card--print">
-          <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Printer/3D/printer_3d.png" alt="" onerror="this.remove()"> Print / Export</div>
+          <div class="util-card-title">Print / Export</div>
           <div class="util-card-body">
           <span>Planned your whole journey? Print or save it:</span>
           <select id="printLayoutSelect">
             <option value="compact">Layout: Compact table</option>
             <option value="cards">Layout: Per-semester cards</option>
           </select>
-          <button class="btn small" id="btnPrintPlan" type="button"><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Printer/3D/printer_3d.png" alt="" onerror="this.remove()"> Print / Save PDF</button>
+          <button class="btn small" id="btnPrintPlan" type="button">Print / Save PDF</button>
           </div>
         </div>
       </div>
@@ -1203,7 +1187,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   <div class="tab-panel" data-tab-panel="repeat" id="panel-repeat" role="tabpanel" aria-labelledby="tab-repeat" tabindex="0">
     <div class="panel">
       <div class="util-card util-card--repeat">
-        <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Alarm%20clock/3D/alarm_clock_3d.png" alt="" onerror="this.remove()"> Currently In</div>
+        <div class="util-card-title">Currently In</div>
         <div class="util-card-body">
           <select id="currentSemSelect"></select>
           <span class="util-card-note">Used to check repeat-course deadlines below.</span>
@@ -1219,7 +1203,6 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   </div>
 
   <div class="disclaimer-banner">
-    <span class="db-icon"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Warning/3D/warning_3d.png" alt="" onerror="this.remove()"></span>
     <span><b>Unofficial student-built tool</b> — not run by BRAC University; results are estimates, not official records. Confirm CGPA, credits and repeat/retake decisions with your <b>advisor, the Registrar, or your official gradesheet</b>. Policy details summarised from BRACU's published <a href="https://www.bracu.ac.bd/academics/policies-and-procedures" target="_blank" rel="noopener">Policies and Procedures</a>.</span>
   </div>
 
@@ -1297,7 +1280,6 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
 <div class="confirm-modal-overlay" id="compactModeDialogOverlay">
   <div class="confirm-modal compact-mode-dialog">
-    <div class="compact-mode-dialog-icon"><img class="icon-3d-lg" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Mobile%20phone/3D/mobile_phone_3d.png" alt="" onerror="this.remove()"></div>
     <h3>Hi! Are you visiting from a phone?</h3>
     <div class="note" style="font-size:14px;line-height:1.65;">
       We can switch to a shorter layout for phones — reference info and print/export tuck behind a tap so you scroll less. Change this anytime in Settings.
@@ -1322,16 +1304,16 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
 <div class="confirm-modal-overlay" id="settingsModalOverlay">
   <div class="confirm-modal settings-modal">
-    <h3><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" alt="" onerror="this.remove()"> Settings</h3>
+    <h3>Settings</h3>
     <div class="settings-section">
-      <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Artist%20palette/3D/artist_palette_3d.png" alt="" onerror="this.remove()"> Display</h4>
+      <h4>Display</h4>
       <label class="settings-checkbox-row">
         <input type="checkbox" id="chkCompactMode">
         <span><b>Compact Mode</b> — shorter layout for phones, hides sidebar &amp; print controls behind a tap.</span>
       </label>
     </div>
     <div class="settings-section" style="--settings-accent:var(--teal);--settings-accent-soft:var(--teal-soft);">
-      <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Floppy%20disk/3D/floppy_disk_3d.png" alt="" onerror="this.remove()"> Your data</h4>
+      <h4>Your data</h4>
       <div class="note">Everything lives only in this browser's local storage. Back it up to a file, or move it to another device/browser.</div>
       <div class="footer-actions" style="margin-top:8px;">
         <button class="btn small" id="btnExportData" type="button">&#11015; Download my plan (.json)</button>
@@ -1341,10 +1323,10 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div id="settingsDataNote" class="repeat-meta" style="margin-top:6px;"></div>
     </div>
     <div class="settings-section danger-zone">
-      <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Warning/3D/warning_3d.png" alt="" onerror="this.remove()"> Danger zone</h4>
+      <h4>Danger zone</h4>
       <div class="note">Wipes every grade, plan and preference from this browser. Can't be undone — export first if unsure.</div>
       <div class="footer-actions" style="margin-top:8px;">
-        <button class="btn small footer-danger" id="btnReset" type="button"><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Wastebasket/3D/wastebasket_3d.png" alt="" onerror="this.remove()"> Hard Reset (clear everything)</button>
+        <button class="btn small footer-danger" id="btnReset" type="button">Hard Reset (clear everything)</button>
       </div>
     </div>
     <div class="footer-actions" style="justify-content:flex-end;margin-top:16px;">
@@ -2381,7 +2363,7 @@ let howtoDismissed = false; // Semester Wise tab's quick-start walkthrough — d
 // setting: each block is its own independent toggle.
 function renderMathDetails(titleHtml, tableRowsHtml, tableHeadHtml, formulaHtml){
   return `<details class="math-details">
-    <summary><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Abacus/3D/abacus_3d.png" alt="" onerror="this.remove()"> Show the math${titleHtml ? " — "+titleHtml : ""}</summary>
+    <summary>Show the math${titleHtml ? " — "+titleHtml : ""}</summary>
     <table class="math-table"><thead><tr>${tableHeadHtml}</tr></thead><tbody>${tableRowsHtml}</tbody></table>
     <div class="math-formula">${formulaHtml}</div>
   </details>`;
@@ -4182,11 +4164,7 @@ async function analyzeGradesheet(file){
 let darkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 function applyTheme(){
   document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
-  const icon = document.getElementById("themeToggleIcon");
   const label = document.getElementById("themeToggleLabel");
-  if(icon) icon.src = darkMode
-    ? "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sun/3D/sun_3d.png"
-    : "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Crescent%20moon/3D/crescent_moon_3d.png";
   if(label) label.textContent = darkMode ? "Light" : "Dark";
 }
 document.getElementById("btnThemeToggle").addEventListener("click", ()=>{
