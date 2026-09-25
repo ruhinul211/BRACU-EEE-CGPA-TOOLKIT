@@ -409,7 +409,8 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .combo-item .combo-sub{font-family:var(--font-mono);font-size:11.5px;color:var(--text-dim);}
 .combo-empty{padding:11px 13px;font-size:12.5px;color:var(--text-dim);}
 .sem-nav{display:flex;align-items:center;gap:9px;margin-top:13px;flex-wrap:wrap;}
-.sem-nav select{width:auto;flex:1;min-width:160px;}
+.sem-nav select{width:auto;flex:1;min-width:160px;font-weight:700;}
+.sem-nav-legend{font-size:11px;color:var(--text-dim);margin-top:6px;}
 .sem-view-header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:17px;margin-bottom:4px;}
 .sem-view-title{font-family:var(--font-head);font-weight:700;font-size:17px;}
 .sem-view-year{font-family:var(--font-mono);font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;}
@@ -720,13 +721,22 @@ body.compact-mode .main-col > *{order:0;}
 body.compact-mode #howToCard{order:-90;}
 body.compact-mode #contextHint{order:-85;}
 body.compact-mode .tab-bar,
-body.compact-mode .compact-aside-toggle,
 body.compact-mode .tab-panel{order:-80;}
+/* The reference-info toggle sits at the same order as the aside it reveals
+   (and right before it in DOM — see relocateForCompactMode) so tapping it
+   drops the grading-scale/standing/elective content in directly underneath,
+   below whichever tab's content is showing — not tucked above it near the
+   tab strip, and not somewhere else on the page entirely. */
+body.compact-mode .compact-aside-toggle,
 body.compact-mode aside.sidebar-right{order:-79;}
 body.compact-mode .standing-strip{order:-75;}
+body.compact-mode #aboutLayoutBlock{order:-74;}
 body.compact-mode #howCalcBlock{order:-70;}
-body.compact-mode #retakeRepeatPolicyBlock,
-body.compact-mode .disclaimer-banner{order:-60;}
+body.compact-mode #retakeRepeatPolicyBlock{order:-60;}
+body.compact-mode .credit-progress-wrap{display:none;}
+/* The unofficial-tool disclaimer reads as an afterthought everywhere else,
+   so it belongs at the very end of the page, after the footer note. */
+body.compact-mode .disclaimer-banner{order:90;}
 
 body.compact-mode .cgpa-block{display:none;}
 /* The marketing blurb is useful context on a first desktop visit, but on a
@@ -861,7 +871,13 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   td.remove-cell{margin-left:auto;}
   .calc-course-row{gap:8px;}
   .calc-course-row select{min-width:0;}
-  .sem-nav select{min-width:0;}
+  /* Previous/dropdown/Next must fit one line: the arrow stays, the word
+     next to it goes, and the dropdown gets what's left plus a bigger,
+     bolder font (it was previously tiny and easy to misread). */
+  .sem-nav{flex-wrap:nowrap;}
+  .sem-nav .btn-label-text{display:none;}
+  .sem-nav #btnPrevSem, .sem-nav #btnNextSem{flex:0 0 auto;padding:9px 13px;}
+  .sem-nav select{min-width:0;font-size:15px;padding:9px 8px;}
   .mix-tier{align-items:stretch;}
   .mix-tier select{min-width:0;width:100%;flex:1 1 100%;}
   .repeat-controls select{min-width:0;}
@@ -1100,11 +1116,12 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <div id="semesterSearchResults" class="combo-results"></div>
       </div>
       <div class="sem-nav">
-        <button class="btn small" id="btnPrevSem" type="button">← Previous</button>
+        <button class="btn small" id="btnPrevSem" type="button">← <span class="btn-label-text">Previous</span></button>
         <select id="semesterViewSelect"></select>
-        <button class="btn small" id="btnNextSem" type="button">Next →</button>
-        <button class="btn small" id="btnAddSemester" type="button" title="Not everyone finishes in 12 semesters — add another if you need it">+ Add another semester</button>
+        <button class="btn small" id="btnNextSem" type="button"><span class="btn-label-text">Next</span> →</button>
       </div>
+      <div class="sem-nav-legend">· not started &nbsp; ○ 0 graded &nbsp; ◐ partly graded &nbsp; ✓ all graded</div>
+      <button class="btn small" id="btnAddSemester" type="button" title="Not everyone finishes in 12 semesters — add another if you need it" style="display:none;margin-top:8px;">+ Add another semester</button>
       <div class="util-card util-card--elective">
         <div class="util-card-title">Program Elective Focus</div>
         <div class="util-card-body">
@@ -1114,7 +1131,8 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
           <span class="util-card-note">Reorders the course picker for Program Elective slots to show your area first. Doesn't restrict what you can pick, or affect your CGPA.</span>
         </div>
       </div>
-      <div class="side-card collapsed" style="margin-top:10px;">
+      <div id="aboutLayoutSlot"></div>
+      <div class="side-card collapsed" id="aboutLayoutBlock" style="margin-top:10px;">
         <button class="side-head" type="button" data-side-toggle>
           <span>About this layout (V3, Spring 2020+) — nothing here is locked</span><span class="chev">&#9660;</span>
         </button>
@@ -2585,6 +2603,11 @@ function renderSemesterViewer(){
 
   document.getElementById("btnPrevSem").disabled = idx===0;
   document.getElementById("btnNextSem").disabled = idx===lastIdx;
+  // Only worth showing once you're actually at the end of your current plan
+  // and still short of the 136-credit graduation target — otherwise it's a
+  // button almost nobody needs, cluttering every single semester view.
+  const addSemBtn = document.getElementById("btnAddSemester");
+  if(addSemBtn) addSemBtn.style.display = (idx===lastIdx && overallStats().credPlanned < DEGREE_TOTAL_CREDITS) ? "" : "none";
 
   const gpaText = stats.gpa!==null ? `<b>${fmt(stats.gpa)}</b> GPA this semester` : "—";
 
@@ -4225,7 +4248,7 @@ function applyCompactMode(){
 // started — each one's slot element marks exactly where "home" is.
 function relocateForCompactMode(){
   const mainCol = document.querySelector(".main-col");
-  [["howCalcBlock","howCalcSlot"],["retakeRepeatPolicyBlock","retakeRepeatPolicySlot"]].forEach(([blockId, slotId])=>{
+  [["howCalcBlock","howCalcSlot"],["retakeRepeatPolicyBlock","retakeRepeatPolicySlot"],["aboutLayoutBlock","aboutLayoutSlot"]].forEach(([blockId, slotId])=>{
     const block = document.getElementById(blockId);
     const slot = document.getElementById(slotId);
     if(!block || !slot || !mainCol) return;
