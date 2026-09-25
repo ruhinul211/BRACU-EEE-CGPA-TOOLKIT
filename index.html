@@ -1276,6 +1276,13 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       </label>
     </div>
     <div class="settings-section">
+      <h4>Program Elective focus</h4>
+      <div class="note">Picking one just reorders the course picker for Program Elective slots — your chosen area shows first instead of always Power, so you're not scrolling through every specialization to find yours. It doesn't lock anything in or affect your CGPA; you can still pick any course from any area.</div>
+      <select id="preferredElectiveAreaSelect" style="margin-top:8px;width:100%;">
+        <option value="">Not decided yet — show all areas as usual</option>
+      </select>
+    </div>
+    <div class="settings-section">
       <h4>Your data</h4>
       <div class="note">Everything lives only in this browser's local storage. Back it up to a file, or move it to another device/browser.</div>
       <div class="footer-actions" style="margin-top:8px;">
@@ -1522,6 +1529,16 @@ const TAG_LABELS = {
   interdisc:"Program Elective — Interdisciplinary / Emerging Topics",
 };
 const TAG_ORDER = ["core","writing","arts","social","communities","power","electronics","comm","robotics","interdisc"];
+// A generic "GenEd Elective" or "Program Elective" slot is tagged with just
+// ONE of these areas (whichever the official V3 template defaults to), but
+// courses from any area in the same family are actually valid there. Used
+// so the course picker opens showing the WHOLE family (all 4 GenEd areas,
+// or all 5 specializations) instead of only that one hardcoded tag —
+// previously a Program Elective slot only ever showed Power, and a GenEd
+// slot only ever showed Arts & Humanities, with everything else hidden
+// behind "Show all subjects".
+const GENED_TAGS = ["writing","arts","social","communities"];
+const ELECTIVE_TAGS = ["power","electronics","comm","robotics","interdisc"];
 
 // null code = open/custom slot (GenEd elective or Program elective), pre-tagged for its default dropdown group
 function slot(label, tag, credit){ return {code:null, label:label, tag:tag, credit:credit}; }
@@ -1684,7 +1701,8 @@ function saveState(){
         darkMode: (typeof darkMode!=="undefined") ? darkMode : false,
         howtoDismissed: (typeof howtoDismissed!=="undefined") ? howtoDismissed : false,
         compactMode: (typeof compactMode!=="undefined") ? compactMode : false,
-        compactModePrompted: (typeof compactModePrompted!=="undefined") ? compactModePrompted : false
+        compactModePrompted: (typeof compactModePrompted!=="undefined") ? compactModePrompted : false,
+        preferredElectiveArea: (typeof preferredElectiveArea!=="undefined") ? preferredElectiveArea : ""
       }
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -1739,6 +1757,11 @@ function hydrateExtras(){
   if(ex.howtoDismissed){ howtoDismissed = true; }
   if(typeof ex.compactMode === "boolean"){ compactMode = ex.compactMode; applyCompactMode(); }
   if(typeof ex.compactModePrompted === "boolean"){ compactModePrompted = ex.compactModePrompted; }
+  if(typeof ex.preferredElectiveArea === "string"){
+    preferredElectiveArea = ex.preferredElectiveArea;
+    const sel = document.getElementById("preferredElectiveAreaSelect");
+    if(sel) sel.value = preferredElectiveArea;
+  }
   maybeSuggestCompactMode();
   render();
 }
@@ -2145,15 +2168,30 @@ function otherInstancesOfCode(code, excludeRid){
 function buildCourseComboList(row, filterText, expanded){
   const q = (filterText||"").trim().toLowerCase();
   let html = "";
-  // With no search typed, this slot's own subject area floats to the top —
-  // e.g. a Program Elective slot shows Power/Electronics/etc. first instead
-  // of making the student scroll past every GenEd course to find it.
-  const order = q ? TAG_ORDER : [row.tag, ...TAG_ORDER.filter(t=>t!==row.tag)];
+  // With no search typed, this slot's own subject FAMILY floats to the top:
+  // a GenEd slot shows all 4 GenEd areas together (Writing/Arts/Social/
+  // Communities), a Program Elective slot shows all 5 specializations
+  // together (with the student's preferred one first, if they picked one
+  // in Settings) — instead of just one hardcoded area with everything else
+  // buried behind "Show all subjects".
+  let relevant;
+  if(GENED_TAGS.includes(row.tag)){
+    relevant = GENED_TAGS;
+  } else if(ELECTIVE_TAGS.includes(row.tag)){
+    relevant = preferredElectiveArea && ELECTIVE_TAGS.includes(preferredElectiveArea)
+      ? [preferredElectiveArea, ...ELECTIVE_TAGS.filter(t=>t!==preferredElectiveArea)]
+      : ELECTIVE_TAGS;
+  } else if(row.tag){
+    relevant = [row.tag];
+  } else {
+    relevant = [];
+  }
+  const order = q ? TAG_ORDER : [...relevant, ...TAG_ORDER.filter(t=>!relevant.includes(t))];
   // On a fresh open (no search, not yet expanded) show ONLY that first,
-  // most-relevant group — ~140 courses in one scrolling list is rough going
+  // most-relevant family — ~140 courses in one scrolling list is rough going
   // on a phone. A "Show all subjects" link reveals the rest on demand.
-  const truncate = !q && !expanded && !!row.tag;
-  const groups = truncate ? [order[0]] : order;
+  const truncate = !q && !expanded && relevant.length>0;
+  const groups = truncate ? relevant : order;
   groups.forEach(tag=>{
     if(!tag) return;
     let items = COURSES.filter(c=>c.tag===tag);
@@ -4173,6 +4211,23 @@ document.getElementById("chkCompactMode").addEventListener("change", (e)=>{
   applyCompactMode();
   saveState();
 });
+
+// The student's preferred Program Elective specialization, if they've
+// picked one — purely reorders the course picker (see buildCourseComboList);
+// never restricts what they can actually select.
+let preferredElectiveArea = "";
+(function populatePreferredElectiveAreaSelect(){
+  const select = document.getElementById("preferredElectiveAreaSelect");
+  ELECTIVE_TAGS.forEach(tag=>{
+    const opt = document.createElement("option");
+    opt.value = tag; opt.textContent = ELECTIVE_AREA_LABELS[tag];
+    select.appendChild(opt);
+  });
+  select.addEventListener("change", (e)=>{
+    preferredElectiveArea = e.target.value;
+    saveState();
+  });
+})();
 document.getElementById("btnEnableCompactMode").addEventListener("click", ()=>{
   compactMode = true;
   compactModePrompted = true;
@@ -4255,6 +4310,8 @@ function hardResetEverything(){
   compactModePrompted = false;
   applyCompactMode();
   maybeSuggestCompactMode();
+  preferredElectiveArea = "";
+  document.getElementById("preferredElectiveAreaSelect").value = "";
   document.getElementById("calcCurrentCgpa").value = "";
   document.getElementById("calcCompletedCredits").value = "";
   document.getElementById("calcNumCourses").value = "";
