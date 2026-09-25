@@ -734,6 +734,16 @@ body.compact-mode #aboutLayoutBlock{order:-74;}
 body.compact-mode #howCalcBlock{order:-70;}
 body.compact-mode #retakeRepeatPolicyBlock{order:-60;}
 body.compact-mode .credit-progress-wrap{display:none;}
+/* These 4 reference blocks only make sense while working on a plan — show
+   them on Calculate Raw CGPA and Semester Wise CGPA, hide them everywhere
+   else (Gradesheet Analyzer, Horizon, Should I Repeat) so those tabs stay
+   focused on their own single job instead of dragging the same policy
+   blurbs along everywhere. */
+body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #aboutLayoutBlock,
+body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #howCalcBlock,
+body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #retakeRepeatPolicyBlock{
+  display:none;
+}
 /* The unofficial-tool disclaimer reads as an afterthought everywhere else,
    so it belongs at the very end of the page, after the footer note. */
 body.compact-mode .disclaimer-banner{order:90;}
@@ -2765,6 +2775,8 @@ function renderCourseRowsInto(tbody, sem){
 // Switches the single-semester viewer to a given semester id, used by the
 // repeat panel's "fill in grades" jump buttons.
 function switchTab(name){
+  const mainCol = document.querySelector(".main-col");
+  if(mainCol) mainCol.dataset.activeTab = name;
   Array.prototype.forEach.call(document.querySelectorAll(".tab-btn"), b=>{
     const on = b.dataset.tab===name;
     b.classList.toggle("active", on);
