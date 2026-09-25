@@ -682,14 +682,32 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .compact-mode-dialog-actions{flex-direction:column;margin-top:22px;}
 .compact-mode-dialog-actions .btn{width:100%;padding:12px 16px;font-size:14px;}
 
-/* On a phone, the raw calculator is the thing most people came here to use —
-   everything else (stats, academic standing, the tab strip, other tools)
-   is reordered to sit below it instead of forcing a scroll past all of it
-   first. Only .main-col needs to become a flex column for `order` to work;
-   nothing here changes which panel is actually active/visible. */
+/* Phone reading order, top to bottom (hero itself is outside .main-col, so
+   it's already first): 2) "New here?" walkthrough, 3) the 5 tabs, opened to
+   Raw CGPA, 4) how BRACU calculates it, 5) retake/repeat policy + the
+   unofficial-tool disclaimer, 6) a compact CGPA/credits recap, 7) everything
+   else (footer, reference-info toggle, print/export toggle). #howCalcBlock
+   and #retakeRepeatPolicyBlock normally live inside the calc tab-panel —
+   JS (applyCompactMode) physically relocates them to be direct children of
+   .main-col so `order` can place them independently of which tab is open;
+   they always leave a slot element behind so turning Compact Mode back off
+   puts them right back where they came from. */
 body.compact-mode .main-col{display:flex;flex-direction:column;}
 body.compact-mode .main-col > *{order:0;}
-body.compact-mode .tab-panel[data-tab-panel="calc"]{order:-100;}
+body.compact-mode #howToCard{order:-90;}
+body.compact-mode .tab-bar,
+body.compact-mode .tab-panel{order:-80;}
+body.compact-mode #howCalcBlock{order:-70;}
+body.compact-mode #retakeRepeatPolicyBlock,
+body.compact-mode .disclaimer-banner{order:-60;}
+body.compact-mode .stats-grid,
+body.compact-mode .credit-progress-wrap,
+body.compact-mode .standing-strip,
+body.compact-mode #overallMathBox,
+body.compact-mode #contextHint{order:-50;}
+body.compact-mode .stats-grid .stat-value{font-size:20px;font-weight:700;}
+body.compact-mode .stats-grid .stat-label{font-size:10px;}
+body.compact-mode .credit-progress-label{font-size:11px;font-weight:700;}
 
 .compact-aside-toggle{display:none;}
 body.compact-mode .compact-aside-toggle{
@@ -948,7 +966,8 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <div id="calcResult"></div>
       <div id="calcQuote"></div>
 
-      <div class="policy-block">
+      <div id="howCalcSlot"></div>
+      <div class="policy-block" id="howCalcBlock">
         <h3>How BRACU calculates your CGPA</h3>
         <p>BRAC University uses a credit-weighted average. Each course contributes its grade point multiplied by its credit hours, and the total is divided by the credits attempted — so a 3-credit course moves your CGPA three times as much as a 1-credit lab.</p>
         <div class="formula-box">
@@ -962,7 +981,8 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <p>Grades carrying no grade point — <b>P</b> (Pass), <b>I</b> (Incomplete) and <b>W</b> (Withdrawal) — are left out of the calculation entirely.</p>
       </div>
 
-      <div class="policy-block policy-tabgroup">
+      <div id="retakeRepeatPolicySlot"></div>
+      <div class="policy-block policy-tabgroup" id="retakeRepeatPolicyBlock">
         <div class="side-card collapsed">
           <button class="side-head" type="button" data-side-toggle>
             <span>📋 Retake policy — for an F grade</span><span class="chev">&#9660;</span>
@@ -4025,6 +4045,24 @@ function applyCompactMode(){
   document.body.classList.toggle("compact-mode", compactMode);
   const chk = document.getElementById("chkCompactMode");
   if(chk) chk.checked = compactMode;
+  relocateForCompactMode();
+}
+// Moves #howCalcBlock/#retakeRepeatPolicyBlock out to the top level (so CSS
+// `order` can place them between the tabs and the stats recap regardless of
+// which tab is open), or puts them back in the calc tab-panel where they
+// started — each one's slot element marks exactly where "home" is.
+function relocateForCompactMode(){
+  const mainCol = document.querySelector(".main-col");
+  [["howCalcBlock","howCalcSlot"],["retakeRepeatPolicyBlock","retakeRepeatPolicySlot"]].forEach(([blockId, slotId])=>{
+    const block = document.getElementById(blockId);
+    const slot = document.getElementById(slotId);
+    if(!block || !slot || !mainCol) return;
+    if(compactMode){
+      if(block.parentElement !== mainCol) mainCol.appendChild(block);
+    } else {
+      if(block.parentElement === mainCol) slot.after(block);
+    }
+  });
 }
 function maybeSuggestCompactMode(){
   const overlay = document.getElementById("compactModeDialogOverlay");
