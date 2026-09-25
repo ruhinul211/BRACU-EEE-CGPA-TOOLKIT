@@ -734,14 +734,24 @@ body.compact-mode #aboutLayoutBlock{order:-74;}
 body.compact-mode #howCalcBlock{order:-70;}
 body.compact-mode #retakeRepeatPolicyBlock{order:-60;}
 body.compact-mode .credit-progress-wrap{display:none;}
-/* These 4 reference blocks only make sense while working on a plan — show
+/* These reference blocks only make sense while working on a plan — show
    them on Calculate Raw CGPA and Semester Wise CGPA, hide them everywhere
    else (Gradesheet Analyzer, Horizon, Should I Repeat) so those tabs stay
    focused on their own single job instead of dragging the same policy
    blurbs along everywhere. */
 body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #aboutLayoutBlock,
 body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #howCalcBlock,
-body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #retakeRepeatPolicyBlock{
+body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #retakeRepeatPolicyBlock,
+body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) #btnToggleAside,
+body.compact-mode .main-col:not([data-active-tab="calc"]):not([data-active-tab="semesters"]) aside.sidebar-right{
+  display:none;
+}
+/* Academic standing only means anything once you have actual grades to
+   judge — Gradesheet Analyzer hasn't produced any yet, and Should I Repeat
+   is itself an analysis of standing-affecting courses, so repeating the
+   same strip there is redundant. */
+body.compact-mode .main-col[data-active-tab="gradesheet"] .standing-strip,
+body.compact-mode .main-col[data-active-tab="repeat"] .standing-strip{
   display:none;
 }
 /* The unofficial-tool disclaimer reads as an afterthought everywhere else,
@@ -869,16 +879,22 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
      wider than the screen instead of actually truncating with the ellipsis
      that's already set up in .course-combo-display. */
   table.course-table tr{min-width:0;}
-  td.course-cell{flex:1 1 100%;min-width:0;}
+  /* Course name + remove (✕) share the first line — the ✕ belongs right
+     next to the course it deletes, not stranded below with credit/grade/qp
+     where it reads like it belongs to the wrong field entirely. order:2 on
+     credit-cell's flex-basis:100% is what forces credit/grade/qp onto their
+     own second line, same trick as course-cell used to use by itself. */
+  td.course-cell{flex:0 1 calc(100% - 48px);min-width:0;order:0;}
   td.course-cell::before{display:none;}
   td.course-cell .course-combo{width:100%;min-width:0;}
   .course-combo-panel{min-width:0;left:0;right:0;}
+  td.remove-cell{order:1;flex:0 0 32px;width:32px !important;margin-left:0;justify-content:center;}
+  td.credit-cell{order:2;flex-basis:100%;}
   td.credit-cell input{width:42px;text-align:center;padding:5px 4px;}
-  td.grade-cell{flex:1 1 auto;min-width:0;}
+  td.grade-cell{order:3;flex:1 1 auto;min-width:0;}
   td.grade-cell select{flex:1 1 auto;min-width:0;}
-  td.qp-cell{font-family:var(--font-mono);font-size:11.5px;}
+  td.qp-cell{order:4;font-family:var(--font-mono);font-size:11.5px;}
   td.qp-cell::before{content:"QP";}
-  td.remove-cell{margin-left:auto;}
   .calc-course-row{gap:8px;}
   .calc-course-row select{min-width:0;}
   /* Previous/dropdown/Next must fit one line: the arrow stays, the word
