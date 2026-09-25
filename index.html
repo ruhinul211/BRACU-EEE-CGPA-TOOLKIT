@@ -720,7 +720,9 @@ body.compact-mode .main-col > *{order:0;}
 body.compact-mode #howToCard{order:-90;}
 body.compact-mode #contextHint{order:-85;}
 body.compact-mode .tab-bar,
+body.compact-mode .compact-aside-toggle,
 body.compact-mode .tab-panel{order:-80;}
+body.compact-mode aside.sidebar-right{order:-79;}
 body.compact-mode .standing-strip{order:-75;}
 body.compact-mode #howCalcBlock{order:-70;}
 body.compact-mode #retakeRepeatPolicyBlock,
@@ -753,9 +755,11 @@ body.compact-mode #heroCompactStatsSlot + .stats-grid .stat-label{
 .compact-aside-toggle .chev{transition:transform .15s ease;}
 .compact-aside-toggle.expanded .chev{transform:rotate(180deg);}
 aside.sidebar-right{display:none;}
-aside.sidebar-right.expanded{display:block;}
+aside.sidebar-right.expanded{display:block;margin-top:10px;}
 .layout{grid-template-columns:minmax(0,1fr);}
-.layout.aside-open{grid-template-columns:minmax(0,1fr) 280px;}
+@media (min-width:1151px){
+  .layout.aside-open{grid-template-columns:minmax(0,1fr) 280px;}
+}
 body.compact-mode .print-export-section{display:none;}
 body.compact-mode .print-export-section.expanded{display:block;}
 body.compact-mode .print-export-toggle{
@@ -1217,6 +1221,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
   </main>
 
+  <div id="asideSlot"></div>
   <aside class="sidebar sidebar-right">
     <div class="side-card">
       <div class="side-static-title">BRACU Grading Scale</div>
@@ -4222,6 +4227,19 @@ function relocateForCompactMode(){
       if(stats.parentElement !== heroSlot.parentElement) heroSlot.after(stats);
     } else {
       if(stats.parentElement === heroSlot.parentElement) statsSlot.after(stats);
+    }
+  }
+  // The reference sidebar is a grid sibling of .main-col, not one of its
+  // children — CSS `order` can't reach it there, so it needs the same real
+  // move: into .main-col (right under the toggle's order group) in Compact
+  // Mode, or back out to its slot when Compact Mode is off.
+  const aside = document.querySelector("aside.sidebar-right");
+  const asideSlot = document.getElementById("asideSlot");
+  if(aside && asideSlot && mainCol){
+    if(compactMode){
+      if(aside.parentElement !== mainCol) mainCol.appendChild(aside);
+    } else {
+      if(aside.parentElement === mainCol) asideSlot.after(aside);
     }
   }
 }
