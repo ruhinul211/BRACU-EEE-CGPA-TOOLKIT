@@ -3695,8 +3695,24 @@ function buildPrintArea(){
   `;
   document.getElementById("printArea").innerHTML = html;
 }
+// Browsers use the page's <title> as the suggested filename when someone
+// picks "Save as PDF" in the print dialog — there's no direct filename API,
+// so this is the standard way to steer it. Swapped back on "afterprint"
+// (fires whether they printed, saved, or cancelled) so the actual tab title
+// never stays changed.
+function buildPrintFilename(){
+  const who = [state.studentName, state.studentId].map(s=>(s||"").trim()).filter(Boolean).join(" ");
+  return `Planned CGPA for ${who || "Student"}`;
+}
 document.getElementById("btnPrintPlan").addEventListener("click", ()=>{
   buildPrintArea();
+  const originalTitle = document.title;
+  document.title = buildPrintFilename();
+  function restoreTitle(){
+    document.title = originalTitle;
+    window.removeEventListener("afterprint", restoreTitle);
+  }
+  window.addEventListener("afterprint", restoreTitle);
   window.print();
 });
 document.getElementById("studentNameInput").addEventListener("input", (e)=>{
