@@ -729,6 +729,10 @@ body.compact-mode #retakeRepeatPolicyBlock,
 body.compact-mode .disclaimer-banner{order:-60;}
 
 body.compact-mode .cgpa-block{display:none;}
+/* The marketing blurb is useful context on a first desktop visit, but on a
+   phone (where "New here?" already explains everything on demand) it's just
+   dead space pushing the actual tools further down every single time. */
+body.compact-mode .hero-sub{display:none;}
 body.compact-mode #heroCompactStatsSlot + .stats-grid{
   display:flex;gap:0;margin-top:14px;border:none;background:none;
   box-shadow:none;border-radius:0;border-top:1px solid rgba(234,242,255,0.18);padding-top:12px;
@@ -858,10 +862,26 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   .calc-course-row{gap:8px;}
   .calc-course-row select{min-width:0;}
   .sem-nav select{min-width:0;}
+  .mix-tier{align-items:stretch;}
+  .mix-tier select{min-width:0;width:100%;flex:1 1 100%;}
+  .repeat-controls select{min-width:0;}
+  /* util-card selects/inputs (Program Elective Focus, Bulk-Fill grade,
+     Print layout, Name/ID, Currently In) default to a 150-190px min-width
+     that's fine next to a label on desktop, but on a narrow phone it forces
+     the box wider than the card and clips the option text with no ellipsis
+     (native <select> text can't ellipsize) — full width fixes both. */
+  .util-card-body{flex-direction:column;align-items:stretch;}
+  .util-card-body label{flex-direction:column;align-items:stretch;gap:4px;}
+  .util-card-body select, .util-card-body input, .util-card-body .btn{width:100%;min-width:0;}
+  .disclaimer-banner{font-size:12px;line-height:1.55;padding:10px 12px;gap:8px;}
   /* Tab strip: smaller touch targets so more of the row is visible before it
      scrolls, plus scroll-snap so a mid-scroll stop always lands on a whole
      tab instead of a sliced-off label. */
-  .tab-bar{scroll-snap-type:x proximity;}
+  .tab-bar{
+    scroll-snap-type:x proximity;
+    -webkit-mask-image:linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+    mask-image:linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+  }
   .tab-btn{padding:10px 12px;font-size:12.5px;scroll-snap-align:start;}
 }
 </style>
@@ -1089,7 +1109,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <div class="util-card-title">Program Elective Focus</div>
         <div class="util-card-body">
           <select id="preferredElectiveAreaSelect">
-            <option value="">Not decided yet — show all areas as usual</option>
+            <option value="">Not decided — show all areas</option>
           </select>
           <span class="util-card-note">Reorders the course picker for Program Elective slots to show your area first. Doesn't restrict what you can pick, or affect your CGPA.</span>
         </div>
@@ -1148,8 +1168,8 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
           <div class="util-card-body">
           <span>Planned your whole journey? Print or save it:</span>
           <select id="printLayoutSelect">
-            <option value="compact">Layout: Compact table</option>
-            <option value="cards">Layout: Per-semester cards</option>
+            <option value="compact">Compact table</option>
+            <option value="cards">Per-semester cards</option>
           </select>
           <button class="btn small" id="btnPrintPlan" type="button">Print / Save PDF</button>
           </div>
@@ -1168,7 +1188,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
         <input type="number" id="targetCgpaInput" min="0" max="4" step="0.01" placeholder="e.g. 3.80">
         <label for="targetBySemester" class="target-by-label">by</label>
         <select id="targetBySemester">
-          <option value="">graduation (all remaining credits)</option>
+          <option value="">graduation (all credits)</option>
         </select>
         <span id="targetRemainingNote" class="repeat-meta"></span>
       </div>
@@ -3214,7 +3234,7 @@ function populateTargetBySemesterSelect(){
   const sel = document.getElementById("targetBySemester");
   const prev = sel.value;
   const semIdxSet = [...new Set(remainingCourseRowsWithSemester().map(t=>t.semIdx))].sort((a,b)=>a-b);
-  let html = `<option value="">graduation (all remaining credits)</option>`;
+  let html = `<option value="">graduation (all credits)</option>`;
   semIdxSet.forEach(idx=>{ html += `<option value="${idx}">${SEMESTER_TEMPLATES[idx].label}</option>`; });
   sel.innerHTML = html;
   if([...sel.options].some(o=>o.value===prev)) sel.value = prev;
