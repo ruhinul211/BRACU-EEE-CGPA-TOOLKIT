@@ -620,6 +620,13 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 }
 .student-info-row label{display:flex;align-items:center;gap:6px;font-weight:600;}
 .student-info-row input{width:auto;min-width:190px;padding:6px 9px;font-size:12.5px;font-weight:400;}
+.fill-rest-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:11px 16px;margin:0 0 10px;
+  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
+  font-size:12.5px;color:var(--text-dim);
+}
+.fill-rest-row select{width:auto;min-width:150px;padding:6px 9px;font-size:12.5px;}
 
 .validation-toast{
   position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
@@ -1077,6 +1084,15 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
           <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
           <span class="repeat-meta">Used only on the printed/exported plan below — never sent anywhere.</span>
         </div>
+
+        <div class="fill-rest-row">
+          <span>Fill remaining (ungraded) courses with:</span>
+          <select id="fillRestGradeSelect">
+            <option value="">Choose a grade…</option>
+          </select>
+          <button class="btn small" id="btnFillRestGrades" type="button">Apply</button>
+        </div>
+        <div class="note" style="margin-top:6px;">Useful for previewing a full printout — courses you've already graded are left exactly as they are; only empty ones get set. Undo (bottom-left) reverses it, or clear a course's grade again by hand.</div>
 
         <div class="print-toolbar">
           <span>Planned your whole journey? Print or save it:</span>
@@ -3691,6 +3707,37 @@ document.getElementById("studentIdInput").addEventListener("input", (e)=>{
   state.studentId = e.target.value;
   saveState();
 });
+
+// Mainly for previewing a full printout: bulk-sets every still-ungraded
+// course (across the WHOLE plan, not just the semester currently in view)
+// to one hypothetical grade in one go. Anything already graded is left
+// completely alone — this only ever touches rows with grade==="".
+(function wireFillRestGrades(){
+  const select = document.getElementById("fillRestGradeSelect");
+  GRADES.filter(g=>g.gp!==null).forEach(g=>{
+    const opt = document.createElement("option");
+    opt.value = g.g; opt.textContent = g.label;
+    select.appendChild(opt);
+  });
+  document.getElementById("btnFillRestGrades").addEventListener("click", async ()=>{
+    const grade = select.value;
+    if(!grade){ flashValidationWarning("Pick a grade first."); return; }
+    const ungraded = [];
+    state.semesters.forEach(sem=>sem.rows.forEach(row=>{ if(!row.grade) ungraded.push(row); }));
+    if(ungraded.length===0){ flashInfoToast("Nothing to fill — every course already has a grade."); return; }
+    const ok = await showConfirmDialog({
+      title: `Fill ${ungraded.length} remaining course${ungraded.length===1?"":"s"} with ${grade}?`,
+      body: `Every course you've already graded stays exactly as it is — only the ${ungraded.length} still-empty one${ungraded.length===1?"":"s"} across your whole plan ${ungraded.length===1?"gets":"get"} set to ${grade}. You can Undo this afterward, or clear a course's grade again by hand.`,
+      confirmText: "Fill them in", cancelText: "Cancel"
+    });
+    if(!ok) return;
+    ungraded.forEach(row=>{ row.grade = grade; });
+    saveState();
+    render();
+    select.value = "";
+    flashInfoToast(`Filled ${ungraded.length} course${ungraded.length===1?"":"s"} with ${grade}.`);
+  });
+})();
 
 /* ============================= GRADESHEET ANALYZER ============================= */
 // Parses a BRACU "GRADE SHEET — UNOFFICIAL COPY" PDF entirely client-side
