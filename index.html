@@ -76,12 +76,16 @@
   background:linear-gradient(135deg,#0a1220 0%,#101c33 55%,#16346b 140%);
 }
 .theme-toggle{
-  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  display:inline-flex;align-items:center;gap:6px;
   font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;
   background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);color:#eaf2ff;
   padding:5px 11px;border-radius:99px;cursor:pointer;transition:background .15s ease,border-color .15s ease;
 }
 .theme-toggle:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4);}
+.hero-eyebrow-actions{margin-left:auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+@media (max-width:520px){
+  .hero-eyebrow-actions{flex:1 1 100%;margin-left:0;justify-content:flex-end;margin-top:6px;}
+}
 .footer-danger{border-color:#c92a42;color:#c92a42;}
 .footer-danger:hover{background:rgba(201,42,66,0.12);border-color:#c92a42;}
 *{box-sizing:border-box;}
@@ -715,34 +719,47 @@ tr.row-flash{animation:rowflash 1.6s ease;}
   .layout{padding:16px 14px 0;}
   table.course-table thead{display:none;}
   table.course-table,table.course-table tbody{display:block;width:100%;}
+  /* One course used to spend a whole row per field (Course / Credit / Grade
+     / Quality pts / Remove stacked top to bottom, ~230px tall on a phone).
+     The course picker still gets its own full-width line — it's the field
+     worth scanning — but credit, grade, quality points and remove now share
+     a single compact row underneath, cutting each course down to ~2 lines. */
   table.course-table tr{
-    display:block;padding:12px 0;border-bottom:1px solid var(--hairline);
+    display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;
+    padding:10px 0;border-bottom:1px solid var(--hairline);
   }
   table.course-table td{
-    border-bottom:none;padding:4px 0;width:auto !important;
-    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    display:flex;align-items:center;gap:5px;
+    border-bottom:none;padding:0;width:auto !important;
   }
-  /* Labels sit left, the control takes the remaining width — without this the
-     inputs collapse to a few pixels inside the flex row on narrow screens. */
   table.course-table td::before{
     content:attr(data-label);flex:0 0 auto;
-    font-family:var(--font-body);font-weight:600;font-size:11px;
-    color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;
+    font-family:var(--font-body);font-weight:600;font-size:9.5px;
+    color:var(--text-dim);text-transform:uppercase;letter-spacing:0.03em;
   }
-  table.course-table td > select,
-  table.course-table td > input{flex:1 1 auto;width:auto;min-width:0;max-width:64%;}
-  table.course-table td.credit-cell > input{max-width:110px;text-align:center;}
-  /* Course picker gets its own full-width row */
-  td.course-cell{flex-direction:column;align-items:stretch;gap:4px;}
-  td.course-cell::before{margin-bottom:2px;}
-  td.course-cell .course-combo{width:100%;}
+  /* min-width:0 overrides the flex default of min-width:auto, which
+     otherwise lets a long course name force this cell (and the whole row)
+     wider than the screen instead of actually truncating with the ellipsis
+     that's already set up in .course-combo-display. */
+  table.course-table tr{min-width:0;}
+  td.course-cell{flex:1 1 100%;min-width:0;}
+  td.course-cell::before{display:none;}
+  td.course-cell .course-combo{width:100%;min-width:0;}
   .course-combo-panel{min-width:0;left:0;right:0;}
-  td.qp-cell{justify-content:space-between;}
-  td.remove-cell{justify-content:flex-end;}
-  td.remove-cell::before{content:"";}
+  td.credit-cell input{width:42px;text-align:center;padding:5px 4px;}
+  td.grade-cell{flex:1 1 auto;min-width:0;}
+  td.grade-cell select{flex:1 1 auto;min-width:0;}
+  td.qp-cell{font-family:var(--font-mono);font-size:11.5px;}
+  td.qp-cell::before{content:"QP";}
+  td.remove-cell{margin-left:auto;}
   .calc-course-row{gap:8px;}
   .calc-course-row select{min-width:0;}
   .sem-nav select{min-width:0;}
+  /* Tab strip: smaller touch targets so more of the row is visible before it
+     scrolls, plus scroll-snap so a mid-scroll stop always lands on a whole
+     tab instead of a sliced-off label. */
+  .tab-bar{scroll-snap-type:x proximity;}
+  .tab-btn{padding:10px 12px;font-size:12.5px;scroll-snap-align:start;}
 }
 </style>
 </head>
@@ -753,12 +770,14 @@ tr.row-flash{animation:rowflash 1.6s ease;}
     <div class="hero-eyebrow">
       <span>BRAC University</span><span class="sep">·</span>
       <span>EEE, Version 3</span>
-      <button class="theme-toggle" id="btnThemeToggle" type="button" title="Switch between light and dark">
-        <span id="themeToggleIcon">&#9789;</span> <span id="themeToggleLabel">Dark</span>
-      </button>
-      <button class="theme-toggle" id="btnOpenSettings" type="button" title="Settings — data export/import, reset">
-        &#9881; Settings
-      </button>
+      <div class="hero-eyebrow-actions">
+        <button class="theme-toggle" id="btnThemeToggle" type="button" title="Switch between light and dark">
+          <span id="themeToggleIcon">&#9789;</span> <span id="themeToggleLabel">Dark</span>
+        </button>
+        <button class="theme-toggle" id="btnOpenSettings" type="button" title="Settings — data export/import, reset">
+          &#9881; Settings
+        </button>
+      </div>
     </div>
     <div class="hero-top">
       <div>
@@ -963,6 +982,8 @@ tr.row-flash{animation:rowflash 1.6s ease;}
         </ol>
       </div>
 
+      <div id="semesterViewBody"></div>
+
       <div class="student-info-row">
         <label>Name: <input type="text" id="studentNameInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
         <label>Student ID: <input type="text" id="studentIdInput" placeholder="auto-filled from a gradesheet upload, or type it in"></label>
@@ -977,8 +998,6 @@ tr.row-flash{animation:rowflash 1.6s ease;}
         </select>
         <button class="btn small" id="btnPrintPlan" type="button">🖨 Print / Save PDF</button>
       </div>
-
-      <div id="semesterViewBody"></div>
     </div>
   </div>
 
@@ -2496,6 +2515,10 @@ function switchTab(name){
     const on = b.dataset.tab===name;
     b.classList.toggle("active", on);
     b.setAttribute("aria-selected", on ? "true" : "false");
+    // The tab strip scrolls horizontally on narrow screens, so a tab reached
+    // via a text link (e.g. "see Should I Repeat") can otherwise land active
+    // but scrolled out of view, with no visible indication anything changed.
+    if(on) b.scrollIntoView({behavior:"smooth", block:"nearest", inline:"nearest"});
   });
   Array.prototype.forEach.call(document.querySelectorAll(".tab-panel"), p=>{
     p.classList.toggle("active", p.dataset.tabPanel===name);
