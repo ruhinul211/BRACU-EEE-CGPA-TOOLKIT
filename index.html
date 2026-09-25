@@ -417,13 +417,6 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .sem-credits{font-family:var(--font-mono);font-weight:400;font-size:11.5px;color:var(--text-dim);margin-left:7px;}
 .sem-gpa-readout{font-family:var(--font-mono);font-size:12.5px;color:var(--text-dim);display:flex;gap:12px;align-items:center;}
 .sem-gpa-readout b{color:var(--text);font-weight:600;}
-.semester-bar{
-  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
-  padding:11px 16px;margin:16px 0 0;
-  background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius-md);
-  font-size:12.5px;color:var(--text-dim);box-shadow:var(--shadow-card);
-}
-.semester-bar select{width:auto;min-width:150px;padding:6px 9px;font-size:12.5px;}
 
 /* ---------- Calculate Raw CGPA ---------- */
 .calc-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px;}
@@ -647,6 +640,7 @@ tr.row-flash{animation:rowflash 1.6s ease;}
 .util-card--fill{--util-accent:var(--amber);--util-accent-soft:var(--amber-soft);}
 .util-card--student{--util-accent:var(--accent);--util-accent-soft:var(--accent-soft);}
 .util-card--print{--util-accent:var(--teal);--util-accent-soft:var(--teal-soft);}
+.util-card--repeat{--util-accent:var(--amber);--util-accent-soft:var(--amber-soft);max-width:420px;}
 
 /* ---------- 3D icons ----------
    Flat unicode emoji render as tiny, low-contrast glyphs on most platforms
@@ -979,7 +973,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   <div class="tab-panel" data-tab-panel="gradesheet" id="panel-gradesheet" role="tabpanel" aria-labelledby="tab-gradesheet" tabindex="0">
     <div class="panel">
       <h2>Gradesheet Analyzer</h2>
-      <div class="panel-sub">Upload your BRACU <b>unofficial web gradesheet PDF</b> and it's read entirely in your browser — never uploaded anywhere — to auto-fill your grades into Semester Wise CGPA. Works with any number of semesters/courses on the sheet. Courses BRACU lists at <b>0.00 credits are skipped</b>, and a course you don't recognize (non-V3, typo, older curriculum) is reported instead of guessed at.</div>
+      <div class="panel-sub">Upload your BRACU <b>unofficial web gradesheet PDF</b> — read entirely in your browser, never uploaded — to auto-fill Semester Wise CGPA.</div>
 
       <div class="gradesheet-drop" id="gradesheetDrop">
         <input type="file" id="gradesheetFile" accept="application/pdf,.pdf" style="display:none;">
@@ -999,7 +993,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   <div class="tab-panel" data-tab-panel="calc" id="panel-calc" role="tabpanel" aria-labelledby="tab-calc" tabindex="0">
     <div class="panel">
       <h2>Calculate Raw CGPA</h2>
-      <div class="panel-sub">Plain numbers, no course list required. Enter your standing before this semester (0 and 0 if this is your first), how many courses you're taking, and a grade for each.</div>
+      <div class="panel-sub">No course list needed — just your current standing and this semester's grades.</div>
 
       <div class="calc-inputs">
         <div class="calc-input-field">
@@ -1028,17 +1022,23 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
 
       <div id="howCalcSlot"></div>
       <div class="policy-block" id="howCalcBlock">
-        <h3>How BRACU calculates your CGPA</h3>
-        <p>BRAC University uses a credit-weighted average. Each course contributes its grade point multiplied by its credit hours, and the total is divided by the credits attempted — so a 3-credit course moves your CGPA three times as much as a 1-credit lab.</p>
-        <div class="formula-box">
-          GPA =
-          <span class="frac">
-            <span class="num">&sum; (Grade point &times; Credits)</span>
-            <span class="den">&sum; Credits attempted</span>
-          </span>
+        <div class="side-card collapsed">
+          <button class="side-head" type="button" data-side-toggle>
+            <span>How BRACU calculates your CGPA</span><span class="chev">&#9660;</span>
+          </button>
+          <div class="side-body">
+            <p>Credit-weighted average: each course's grade point &times; its credits, summed and divided by credits attempted — a 3-credit course moves your CGPA 3&times; as much as a 1-credit lab.</p>
+            <div class="formula-box">
+              GPA =
+              <span class="frac">
+                <span class="num">&sum; (Grade point &times; Credits)</span>
+                <span class="den">&sum; Credits attempted</span>
+              </span>
+            </div>
+            <p style="margin-top:10px;">CGPA applies this across <b>every</b> course you've taken, not an average of semester GPAs — this calculator reconstructs it as <span class="policy-key">CGPA &times; completed credits</span>, adds this semester's, divides by the new total.</p>
+            <p><b>P</b> (Pass), <b>I</b> (Incomplete) and <b>W</b> (Withdrawal) carry no grade point and are excluded.</p>
+          </div>
         </div>
-        <p style="margin-top:10px;">Your <b>CGPA</b> is the same formula applied across every course you've taken so far, not an average of your semester GPAs. That's why this calculator asks for your completed credits as well as your current CGPA — it reconstructs your total quality points as <span class="policy-key">CGPA &times; completed credits</span>, adds this semester's, and divides by the new credit total.</p>
-        <p>Grades carrying no grade point — <b>P</b> (Pass), <b>I</b> (Incomplete) and <b>W</b> (Withdrawal) — are left out of the calculation entirely.</p>
       </div>
 
       <div id="retakeRepeatPolicySlot"></div>
@@ -1081,7 +1081,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   <div class="tab-panel" data-tab-panel="semesters" id="panel-semesters" role="tabpanel" aria-labelledby="tab-semesters" tabindex="0">
     <div class="panel">
       <h2>Semester Wise CGPA</h2>
-      <div class="panel-sub">The full Version 3 sequence, semester by semester — a manual, detailed alternative to the quick calculator, for anyone who wants to plan out every course by name. Jump straight to a semester, or search for a course.</div>
+      <div class="panel-sub">Plan every course by name, semester by semester. Jump to a semester, or search a course.</div>
       <div class="combo-wrap">
         <input type="text" id="semesterSearchInput" class="combo-input" placeholder="Jump to a semester, or search a course (e.g. &quot;Circuits&quot;, &quot;EEE205&quot;)…" autocomplete="off">
         <div id="semesterSearchResults" class="combo-results"></div>
@@ -1101,10 +1101,15 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
           <span class="util-card-note">Reorders the course picker for Program Elective slots to show your area first. Doesn't restrict what you can pick, or affect your CGPA.</span>
         </div>
       </div>
-      <div class="note" style="margin-top:10px;">
-        This tab defaults to the official Version 3 recommended sequence and its 12 semesters, but nothing here is locked: add, remove, or swap any course in any semester, and add semesters beyond 12 if your own journey runs longer. What matters for graduation is reaching <b>136 total credits</b>, not matching this layout exactly.
-        Also note: this semester-by-semester structure reflects <b>Version 3</b> only, effective for student intake from <b>Spring 2020 onward</b> — if you enrolled before that, your curriculum differs and this tab won't line up with your actual gradesheet.
-        See the official <a href="https://engineering.bracu.ac.bd/recommended-course-sequence-details/1" target="_blank" rel="noopener">Recommended Course Sequence</a> on the BRACU School of Engineering site.
+      <div class="side-card collapsed" style="margin-top:10px;">
+        <button class="side-head" type="button" data-side-toggle>
+          <span>About this layout (V3, Spring 2020+) — nothing here is locked</span><span class="chev">&#9660;</span>
+        </button>
+        <div class="side-body">
+          Defaults to the official Version 3 recommended sequence, but add, remove or swap any course in any semester, and add semesters beyond 12 if you need them — what matters for graduation is <b>136 total credits</b>, not matching this layout exactly.<br><br>
+          This sequence covers <b>Version 3</b> only (intake from <b>Spring 2020 onward</b>) — if you enrolled earlier, your curriculum differs and this tab won't match your gradesheet.<br><br>
+          See the official <a href="https://engineering.bracu.ac.bd/recommended-course-sequence-details/1" target="_blank" rel="noopener">Recommended Course Sequence</a> (BRACU School of Engineering).
+        </div>
       </div>
 
       <div class="sem-walkthrough" id="semWalkthrough">
@@ -1163,7 +1168,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   <div class="tab-panel" data-tab-panel="horizon" id="panel-horizon" role="tabpanel" aria-labelledby="tab-horizon" tabindex="0">
     <div class="panel">
       <h2>Horizon</h2>
-      <div class="panel-sub">Set a goal and see the average you'd need across your remaining credits — build your own mix of grades and see exactly where it lands you — or find out which semester you'd actually cross your target at that pace.</div>
+      <div class="panel-sub">Set a target CGPA and see the average you need — or build your own grade mix and see where it lands.</div>
 
       <div class="target-row">
         <label for="targetCgpaInput">Target CGPA:</label>
@@ -1191,14 +1196,16 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
   </div>
 
   <div class="tab-panel" data-tab-panel="repeat" id="panel-repeat" role="tabpanel" aria-labelledby="tab-repeat" tabindex="0">
-    <div class="semester-bar">
-      <span>Currently in:</span>
-      <select id="currentSemSelect"></select>
-      <span>— used to check repeat-course deadlines below (Semester Wise CGPA tab)</span>
-    </div>
     <div class="panel">
+      <div class="util-card util-card--repeat">
+        <div class="util-card-title"><img class="icon-3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Alarm%20clock/3D/alarm_clock_3d.png" alt="" onerror="this.remove()"> Currently In</div>
+        <div class="util-card-body">
+          <select id="currentSemSelect"></select>
+          <span class="util-card-note">Used to check repeat-course deadlines below.</span>
+        </div>
+      </div>
       <h2>Should I Repeat?</h2>
-      <div class="panel-sub">Every course below 4.00 shows up here. Pick a hoped-for grade to see the maximum CGPA you could reach <b>with</b> vs. <b>without</b> repeating it, and exactly how many points the repeat is worth. This tab is pure analysis — once you've decided, go implement the repeat yourself in <b>Semester Wise CGPA</b> by picking the same course again in a later semester.</div>
+      <div class="panel-sub">Every course below 4.00, with the max CGPA you'd reach <b>with</b> vs. <b>without</b> repeating it. Pure analysis — repeat it for real in <b>Semester Wise CGPA</b>.</div>
       <div id="repeatPanelBody"></div>
       <div class="note">
         BRACU rule: you may repeat a course once to improve its grade, within 2 semesters of first taking it — the Residential Semester doesn't count toward those two. There's no cap on the new grade, and whichever grade you get most recently is the one that counts, even if it's lower.
@@ -1297,9 +1304,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
     <div class="compact-mode-dialog-icon"><img class="icon-3d-lg" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Mobile%20phone/3D/mobile_phone_3d.png" alt="" onerror="this.remove()"></div>
     <h3>Hi! Are you visiting from a phone?</h3>
     <div class="note" style="font-size:14px;line-height:1.65;">
-      If you're on an Android phone or an iPhone, we can switch to a simpler, shorter layout made for smaller screens — the reference info and print/export options just tuck behind a tap so you spend less time scrolling and more time on your grades.
-      <br><br>
-      You can always change this later in Settings.
+      We can switch to a shorter layout for phones — reference info and print/export tuck behind a tap so you scroll less. Change this anytime in Settings.
     </div>
     <div class="footer-actions compact-mode-dialog-actions">
       <button class="btn primary" id="btnEnableCompactMode" type="button">Yes, I'm on Android/iOS — use the simpler layout</button>
@@ -1326,7 +1331,7 @@ body.compact-mode .print-export-toggle.expanded .chev{transform:rotate(180deg);}
       <h4><img class="icon-3d-sm" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Artist%20palette/3D/artist_palette_3d.png" alt="" onerror="this.remove()"> Display</h4>
       <label class="settings-checkbox-row">
         <input type="checkbox" id="chkCompactMode">
-        <span><b>Compact Mode</b> — a shorter, simplified layout for phones: hides the reference sidebar and print/export controls behind a tap, so entering grades takes less scrolling.</span>
+        <span><b>Compact Mode</b> — shorter layout for phones, hides sidebar &amp; print controls behind a tap.</span>
       </label>
     </div>
     <div class="settings-section" style="--settings-accent:var(--teal);--settings-accent-soft:var(--teal-soft);">
